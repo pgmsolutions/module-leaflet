@@ -52,4 +52,13 @@ getColorLvlPolygon <- function(lvlPolygon)
         return(rgb(192, 57, 43, maxColorValue=255))
 }
 
-X <- data.table::fread("aportfolios.csv", sep =";")
+donnees <- data.table::fread("aportfolios.csv", sep =";", na.strings=c("",NA,"NULL"))
+IS_NULL <- is.na(donnees$lat) | is.na(donnees$lng)
+
+donnees_null <- donnees[IS_NULL, ]
+donnees <- donnees[!IS_NULL, ]
+
+data.table::setDF(donnees)
+data.table::setDF(donnees_null)
+
+donnees_points <- donnees[c("lat", "lng")]

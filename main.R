@@ -48,6 +48,8 @@ onRPGMJavascript <- function(message, data){
         color <- getColorLvlPolygon(z)
         for(i in 1:length(shape[[z]]$geometry))
         {
+#            donnees_points_sf <- sf::st_as_sf(donnees_points, coords = c('lng', 'lat'), crs = sf::st_crs(shape[[z]])) #ne sépare pas encore les polygones, donc teste tout, il faut gérer les sous polygones shape[[z]][i, ] après et tout envoyer / tester dedans. Et retravailler si besoin l'envoie des données / relier les polygones.
+#            IS_IN_SHAPE <- sf::st_contains(shape[[1]], donnees_points_sf, sparse = FALSE) 
             for(j in 1:length(shape[[z]]$geometry[[i]]))
             {
                 country <- shape[[z]]$COUNTRY[[i]]
