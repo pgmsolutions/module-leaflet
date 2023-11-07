@@ -50,6 +50,7 @@ onRPGMJavascript <- function(message, data){
         {
             for(j in 1:length(shape[[z]]$geometry[[i]]))
             {
+                country <- shape[[z]]$COUNTRY[[i]]
                 Z <- shape[[z]]$geometry[[i]][[j]][[1]]
                 if(nrow(Z) > 1 && doDisplayPolygon(Z, data$view))
                 {
