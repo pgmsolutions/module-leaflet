@@ -1,0 +1,21 @@
+{
+	"start": "main.pseq",
+	"name": "Leaflet tutorial",
+	"company": "PGM Solutions",
+	"description": "Example on how to integrate Javascript in RPGM with Leaflet.",
+	"wd": "program",
+	"logo": "",
+	"css": "#map { height: 500px; }",
+	"list": "hide",
+	"rconsole": "r",
+	"outputfolder": "{{name}}_{{datetime}}",
+	"history": [],
+	"created": "2023-09-21T09:45:25+02:00",
+	"version": "4.6.0",
+	"customFiles": [
+		"leaflet/leaflet.js",
+		"leaflet/leaflet.css",
+		"main.js",
+		"main.css"
+	]
+}

@@ -1,0 +1,91 @@
+{
+	"elements": [
+		{
+			"id": "",
+			"type": "label",
+			"data": {
+				"value": "Leaflet JS/R example",
+				"isr": false,
+				"css": "",
+				"margintop": "10",
+				"labeltext": "",
+				"labelposition": "hidden",
+				"helptext": "",
+				"helpposition": "bottom",
+				"fontsize": "24",
+				"fontfamily": "default",
+				"fontcolor": "#ffffff"
+			}
+		},
+		{
+			"id": "",
+			"type": "label",
+			"data": {
+				"value": "<div id=\"map\"></div>",
+				"isr": false,
+				"css": "",
+				"margintop": "10",
+				"labeltext": "",
+				"labelposition": "hidden",
+				"helptext": "",
+				"helpposition": "bottom",
+				"fontsize": "14",
+				"fontfamily": "default",
+				"fontcolor": "#000000"
+			}
+		},
+		{
+			"id": "lastBounds",
+			"type": "label",
+			"data": {
+				"value": "Waiting...",
+				"isr": false,
+				"css": "",
+				"margintop": "10",
+				"labeltext": "",
+				"labelposition": "hidden",
+				"helptext": "",
+				"helpposition": "bottom",
+				"fontsize": "14",
+				"fontfamily": "default",
+				"fontcolor": "#ffffff"
+			}
+		},
+		{
+			"id": "totalPolygons",
+			"type": "label",
+			"data": {
+				"value": "",
+				"isr": false,
+				"css": "",
+				"margintop": "10",
+				"labeltext": "",
+				"labelposition": "hidden",
+				"helptext": "",
+				"helpposition": "bottom",
+				"fontsize": "14",
+				"fontfamily": "default",
+				"fontcolor": "#ffffff"
+			}
+		},
+		{
+			"id": "",
+			"type": "button",
+			"data": {
+				"value": "Reset view",
+				"isr": false,
+				"css": "",
+				"margintop": "10",
+				"labeltext": "",
+				"labelposition": "hidden",
+				"helptext": "",
+				"helpposition": "bottom",
+				"onpress": "setDefaultView()",
+				"buttonsize": "md",
+				"buttondesign": "primary"
+			}
+		}
+	],
+	"submitbutton": false,
+	"language": "r"
+}
