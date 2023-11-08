@@ -8,6 +8,9 @@ doDisplayPolygon <- function(Z, view)
     return(Z_range$lat[1] < view$northLat && Z_range$lat[2] > view$southLat && Z_range$lng[1] < view$eastLng && Z_range$lng[2] > view$westLng)
 }
 
+formatPolygonForLeaflet <- function(Z)
+    return(lapply(seq_len(nrow(Z)), function(k) list(Z[k, 1], Z[k, 2])))
+
 onRPGMJavascript <- function(message, data){
     if(message == 'mapState'){
         gui.setValue('this', 'lastBounds', paste0('North lat: ', round(data$view$northLat, 3), ' East lng: ', round(data$view$eastLng, 3), ' South lat: ', round(data$view$southLat, 3), ' West lng: ', round(data$view$westLng, 3), ' Zoom lvl: ', data$view$zoomLevel));
@@ -60,7 +63,7 @@ onRPGMJavascript <- function(message, data){
                     Z <- shape[[z]]$geometry[[i]][[j]][[k]]
                     if(nrow(Z) > 1 && doDisplayPolygon(Z, data$view))
                     {
-                        P[[l]] <- lapply(seq_len(nrow(Z)), function(k) list(Z[k, 1], Z[k, 2]))
+                        P[[l]] <- formatPolygonForLeaflet(Z)
                         l <- l+1
                         total <- total+1
                     }
