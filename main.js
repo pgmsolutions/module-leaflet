@@ -181,23 +181,24 @@ window.MapManager = new class {
             features: this._queueGeoJSON.map(e => {
                 let isMultiple = false;
                 try {
-                    isMultiple = Array.isArray(typeof e.points[0][0]);
+                    isMultiple = Array.isArray(e.points[0][0]);
                 }
                 catch{
                     isMultiple = false;
                 }
                 
-                return {
+                const oo = {
                     type: "Feature",
                     properties: {
                         id: `${e.id}`,
                         color: e.color
                     },
                     geometry: {
-                        type: "Polygon",
-                        coordinates: isMultiple ? e.points : [e.points]
+                        type: isMultiple ? "MultiPolygon" : "Polygon",
+                        coordinates: isMultiple ? e.points.map(p => [p]) : [e.points]
                     }
-                }
+                };
+                return oo;
             })
         });
         this._queueGeoJSON = [];

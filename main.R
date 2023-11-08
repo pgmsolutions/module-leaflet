@@ -57,7 +57,7 @@ onRPGMJavascript <- function(message, data){
                 if(nrow(Z) > 1 && doDisplayPolygon(Z, data$view))
                 {
                     P <- lapply(seq_len(nrow(Z)), function(k) list(Z[k, 1], Z[k, 2]))
-                    rpgm.sendToJavascript('addGeoJSON', list(points=P, id=total, color=color));
+                    rpgm.sendToJavascript('addGeoJSON', list(points=list(P), id=total, color=color));
                     total <- total+1
                 }
             }
