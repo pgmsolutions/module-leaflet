@@ -50,17 +50,21 @@ onRPGMJavascript <- function(message, data){
         {
 #            donnees_points_sf <- sf::st_as_sf(donnees_points, coords = c('lng', 'lat'), crs = sf::st_crs(shape[[z]])) #ne sépare pas encore les polygones, donc teste tout, il faut gérer les sous polygones shape[[z]][i, ] après et tout envoyer / tester dedans. Et retravailler si besoin l'envoie des données / relier les polygones.
 #            IS_IN_SHAPE <- sf::st_contains(shape[[1]], donnees_points_sf, sparse = FALSE) 
+            P <- list()
+            k <- 1
             for(j in 1:length(shape[[z]]$geometry[[i]]))
             {
                 country <- shape[[z]]$COUNTRY[[i]]
                 Z <- shape[[z]]$geometry[[i]][[j]][[1]]
                 if(nrow(Z) > 1 && doDisplayPolygon(Z, data$view))
                 {
-                    P <- lapply(seq_len(nrow(Z)), function(k) list(Z[k, 1], Z[k, 2]))
-                    rpgm.sendToJavascript('addGeoJSON', list(points=list(P), id=total, color=color));
+                    P[[k]] <- lapply(seq_len(nrow(Z)), function(k) list(Z[k, 1], Z[k, 2]))
+                    k <- k+1
                     total <- total+1
                 }
             }
+            if(k > 1)
+                rpgm.sendToJavascript('addGeoJSON', list(points=P, id=total, color=color));
         }
         
         # Erase previous drawings and draw all polygons addded in queue
