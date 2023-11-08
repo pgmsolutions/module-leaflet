@@ -175,9 +175,19 @@ window.MapManager = new class {
         if(this._lastGeoJSON){
             this._lastGeoJSON.remove();
         }
+        
         const finalGeo = ({
             type: "FeatureCollection",
-            features: this._queueGeoJSON.map(e => {return {
+            features: this._queueGeoJSON.map(e => {
+                let isMultiple = false;
+                try {
+                    isMultiple = Array.isArray(typeof e.points[0][0]);
+                }
+                catch{
+                    isMultiple = false;
+                }
+                
+                return {
                     type: "Feature",
                     properties: {
                         id: `${e.id}`,
@@ -185,7 +195,7 @@ window.MapManager = new class {
                     },
                     geometry: {
                         type: "Polygon",
-                        coordinates: [e.points]
+                        coordinates: isMultiple ? e.points : [e.points]
                     }
                 }
             })
@@ -194,7 +204,6 @@ window.MapManager = new class {
 
         this._lastGeoJSON = L.geoJson(finalGeo, {
             style: (feature)=>{
-                console.log(feature)
                 return {
                     fillColor: feature.properties.color,
                     opacity: 1,
