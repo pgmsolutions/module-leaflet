@@ -70,7 +70,7 @@ onRPGMJavascript <- function(message, data){
             }
             if(l > 1)
             {
-                rpgm.sendToJavascript('addGeoJSON', list(points=P, id=i, color=color));
+                rpgm.sendToJavascript('addGeoJSON', list(points=P, id=i, color=Primes_couleurs[[z]][i]));
                 total <- total+1
             }
         }
