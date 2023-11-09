@@ -46,13 +46,10 @@ window.MapManager = new class {
             }
             else*/
             if(message === 'addGeoJSON'){
-                this.addGeoJSON(data.points, data.id, data.color);
+                this.addGeoJSON(data.points, data.id, data.tooltip, data.color);
             }
             else if(message === 'drawGeoJSON'){
                 this.drawGeoJSON();
-            }
-            else if(message == 'resetView'){
-                this._map.setView([48.866667, 2.333333], 5);
             }
         });
         this.initializeMap(); // Try to initialize now for RPGM Server
@@ -88,7 +85,7 @@ window.MapManager = new class {
             return this._div;
         };
         this._mapInfo.update = function(props){
-            this._div.innerHTML = '<h4>Numero</h4>'+(props ? '<b>'+props.id+'</b>' : 'Survoler une zone');
+            this._div.innerHTML = props ? props.tooltip : 'Survoler une zone';
         };
         this._mapInfo.addTo(this._map);
 
@@ -171,8 +168,8 @@ window.MapManager = new class {
     // ---------------------------------------------------------
     // 3. GEOJSON SYSTEM
     // ---------------------------------------------------------
-    addGeoJSON(points, id, color){
-        this._queueGeoJSON.push({points, id, color});
+    addGeoJSON(points, id, tooltip, color){
+        this._queueGeoJSON.push({points, id, tooltip, color});
     }
     drawGeoJSON(geojson){
         if(this._lastGeoJSON){
@@ -194,7 +191,8 @@ window.MapManager = new class {
                     type: "Feature",
                     properties: {
                         id: `${e.id}`,
-                        color: e.color
+                        color: e.color,
+                        tooltip: e.tooltip
                     },
                     geometry: {
                         type: isMultiple ? "MultiPolygon" : "Polygon",
