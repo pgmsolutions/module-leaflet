@@ -51,6 +51,9 @@ window.MapManager = new class {
             else if(message === 'drawGeoJSON'){
                 this.drawGeoJSON();
             }
+            else if(message === 'updateLegend'){
+                this.updateLegend(data.content);
+            }
         });
         this.initializeMap(); // Try to initialize now for RPGM Server
     }
@@ -88,6 +91,15 @@ window.MapManager = new class {
             this._div.innerHTML = props ? props.tooltip : 'Survoler une zone';
         };
         this._mapInfo.addTo(this._map);
+
+        // Legend
+        this._legend = L.control({position: 'bottomright'});
+        this._legend.onAdd = (map)=>{
+            this._legendDiv = L.DomUtil.create('div', 'info legend');
+            this._legendDiv.innerHTML = 'Légende';
+            return this._legendDiv;
+        };
+        this._legend.addTo(this._map);
 
         // Detect zoom change and drag
         this._map.on('zoomend', this.onMapViewChange);
@@ -244,6 +256,9 @@ window.MapManager = new class {
             id: e.target.feature.properties.id
         });
         this._map.fitBounds(e.target.getBounds());
+    }
+    updateLegend(content){
+        this._legendDiv.innerHTML = content;
     }
 }
 MapManager.initialize();

@@ -84,5 +84,6 @@ onRPGMJavascript <- function(message, data){
     }
     else if(message == 'zoneClick'){
         print(paste0('User clicked on zone id: ', data$id));
+        rpgm.sendToJavascript('updateLegend', list(content="Bonjour"));
     }
 }
