@@ -65,22 +65,24 @@ onRPGMJavascript <- function(message, data){
                     {
                         P[[l]] <- formatPolygonForLeaflet(Z)
                         l <- l+1
-                        total <- total+1
                     }
                 }
             }
             if(l > 1)
-                rpgm.sendToJavascript('addGeoJSON', list(points=P, id=total, color=color));
+            {
+                rpgm.sendToJavascript('addGeoJSON', list(points=P, id=i, color=color));
+                total <- total+1
+            }
         }
         
         # Erase previous drawings and draw all polygons addded in queue
-        gui.setValue('this', 'totalPolygons', paste0('Total polygons drawed: ', total));
+        gui.setValue('this', 'totalPolygons', paste0('Total multi-polygons drawed: ', total));
         rpgm.sendToJavascript('drawGeoJSON', list());
     }
     else if(message == 'mapClick'){
         print(paste0('User clicked on lat: ',data$coordinates$lat, 'and lng: ', data$coordinates$lng));
     }
     else if(message == 'zoneClick'){
-        print(paste0('User clicked on zone id: ',data$id));
+        print(paste0('User clicked on zone id: ', data$id));
     }
 }
