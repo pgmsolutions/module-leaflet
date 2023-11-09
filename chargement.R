@@ -1,25 +1,26 @@
-shape <- list() 
-script.setProgress(TRUE, 0L, "Importing shape files...")
+shape <- list()
+n_shape <- 6L
+script.setProgress(TRUE, 0L, "Importing shape files... 1/6")
 
 shape$country <- sf::st_read("sf/gadm41_FRA_0.shp")
 shape$country <- sf::st_simplify(shape$country, preserveTopology = TRUE, dTolerance = 30)
-script.setProgress(TRUE, 16L, "Importing shape files...")
+script.setProgress(TRUE, 8L, "Importing shape files... 2/6")
 
 shape$region <- sf::st_read("sf/gadm41_FRA_1.shp")
 shape$region <- sf::st_simplify(shape$region, preserveTopology = TRUE, dTolerance = 30)
-script.setProgress(TRUE, 33L, "Importing shape files...")
+script.setProgress(TRUE, 17L, "Importing shape files... 3/6")
 
 shape$departement <- sf::st_read("sf/gadm41_FRA_2.shp")
-script.setProgress(TRUE, 50L, "Importing shape files...")
+script.setProgress(TRUE, 25L, "Importing shape files... 4/6")
 
 shape[[4]] <- sf::st_read("sf/gadm41_FRA_3.shp")
-script.setProgress(TRUE, 67L, "Importing shape files...")
+script.setProgress(TRUE, 33L, "Importing shape files... 5/6")
 
 shape[[5]] <- sf::st_read("sf/gadm41_FRA_4.shp")
-script.setProgress(TRUE, 83L, "Importing shape files...")
+script.setProgress(TRUE, 42L, "Importing shape files... 6/6")
 
 shape[[6]] <- sf::st_read("sf/gadm41_FRA_5.shp")
-script.setProgress(TRUE, 100L, "Importing shape files...")
+script.setProgress(TRUE, 50L, "Importing shape files... 6/6")
 
 getLvlPolygonToDisplay <- function(zoomLevel)
 {
@@ -52,7 +53,7 @@ getColorLvlPolygon <- function(lvlPolygon)
         return(rgb(192, 57, 43, maxColorValue=255))
 }
 
-donnees <- data.table::fread("aportfolios.csv", sep =";", na.strings=c("",NA,"NULL"))
+donnees <- data.table::fread("aportfolios.csv", sep =";", na.strings=c("",NA,"NULL"), select=c("lat", "lng", "prime_ttc"))
 IS_NULL <- is.na(donnees$lat) | is.na(donnees$lng)
 
 donnees_null <- donnees[IS_NULL, ]
@@ -62,3 +63,13 @@ data.table::setDF(donnees)
 data.table::setDF(donnees_null)
 
 donnees_points <- donnees[c("lat", "lng")]
+
+Primes <- list()
+for(i in 1:length(shape))
+{
+    script.setProgress(TRUE, round(100*(n_shape+i-1)/(2*n_shape)), paste0("Importing premiums... ", i, "/", n_shape))
+    donnees_points_sf <- sf::st_as_sf(donnees_points, coords = c('lng', 'lat'), crs = sf::st_crs(shape[[1]]))
+    Z <- as.data.frame(sf::st_within(donnees_points_sf, shape[[i]])) #dans le polygone ou non, tester si plus performant
+    Primes[[i]] <- as.vector(tapply(donnees$prime_ttc[Z$row.id], Z$col.id, sum))
+}
+script.setProgress(TRUE, 100L, "Entering GUI...")
