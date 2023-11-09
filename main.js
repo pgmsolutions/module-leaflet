@@ -51,6 +51,9 @@ window.MapManager = new class {
             else if(message === 'drawGeoJSON'){
                 this.drawGeoJSON();
             }
+            else if(message == 'resetView'){
+                this._map.setView([48.866667, 2.333333], 5);
+            }
         });
         this.initializeMap(); // Try to initialize now for RPGM Server
     }
