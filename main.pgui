@@ -84,6 +84,21 @@
 				"buttonsize": "md",
 				"buttondesign": "primary"
 			}
+		},
+		{
+			"id": "var_1",
+			"type": "graph",
+			"data": {
+				"css": "",
+				"margintop": "10",
+				"labeltext": "",
+				"labelposition": "hidden",
+				"helptext": "",
+				"helpposition": "bottom",
+				"graph": "",
+				"graphwidth": "100",
+				"graphheight": "500"
+			}
 		}
 	],
 	"submitbutton": false,

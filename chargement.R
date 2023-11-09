@@ -53,7 +53,8 @@ getColorLvlPolygon <- function(lvlPolygon)
         return(rgb(192, 57, 43, maxColorValue=255))
 }
 
-donnees <- data.table::fread("aportfolios.csv", sep =";", na.strings=c("",NA,"NULL"), select=c("lat", "lng", "prime_ttc"))
+#var_1 = appartement/maison
+donnees <- data.table::fread("aportfolios.csv", sep =";", na.strings=c("",NA,"NULL"), select=c("lat", "lng", "prime_ttc", "var_1"))
 IS_NULL <- is.na(donnees$lat) | is.na(donnees$lng)
 
 donnees_null <- donnees[IS_NULL, ]
@@ -63,6 +64,7 @@ data.table::setDF(donnees)
 data.table::setDF(donnees_null)
 
 donnees_points <- donnees[c("lat", "lng")]
+donnees_points_sf <- sf::st_as_sf(donnees_points, coords = c('lng', 'lat'), crs = sf::st_crs(shape[[1]]))
 
 couleur_min <- '#f1c40f'
 couleur_max <- '#c0392b'
@@ -73,7 +75,6 @@ Primes <- Primes_couleurs <- list()
 for(i in 1:length(shape))
 {
     script.setProgress(TRUE, round(100*(n_shape+i-1)/(2*n_shape)), paste0("Importing premiums... ", i, "/", n_shape))
-    donnees_points_sf <- sf::st_as_sf(donnees_points, coords = c('lng', 'lat'), crs = sf::st_crs(shape[[i]]))
     Z <- as.data.frame(sf::st_within(donnees_points_sf, shape[[i]])) #dans le polygone ou non, tester si plus performant
     Primes[[i]] <- as.vector(tapply(donnees$prime_ttc[Z$row.id], factor(Z$col.id, levels = 1:length(shape[[i]]$geometry)), sum))
     Primes[[i]][is.na(Primes[[i]])] <- 0

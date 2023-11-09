@@ -253,9 +253,11 @@ window.MapManager = new class {
     }
     zoomToFeature(e){
         RPGM.sendToLanguage('r', 'zoneClick', {
-            id: e.target.feature.properties.id
+            id: e.target.feature.properties.id,
+            zoomLevel: this._map.getZoom(),
+            tooltip: e.target.feature.properties.tooltip
         });
-        this._map.fitBounds(e.target.getBounds());
+        //this._map.fitBounds(e.target.getBounds());
     }
     updateLegend(content){
         this._legendDiv.innerHTML = content;
