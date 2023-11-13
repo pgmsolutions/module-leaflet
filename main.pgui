@@ -19,134 +19,134 @@
 		},
 		{
 			"id": "",
-			"type": "label",
-			"data": {
-				"value": "<div id=\"map\"></div>",
-				"isr": false,
-				"css": "",
-				"margintop": "10",
-				"labeltext": "",
-				"labelposition": "hidden",
-				"helptext": "",
-				"helpposition": "bottom",
-				"fontsize": "14",
-				"fontfamily": "default",
-				"fontcolor": "#000000"
-			}
-		},
-		{
-			"id": "lastBounds",
-			"type": "label",
-			"data": {
-				"value": "Waiting...",
-				"isr": false,
-				"css": "",
-				"margintop": "10",
-				"labeltext": "",
-				"labelposition": "hidden",
-				"helptext": "",
-				"helpposition": "bottom",
-				"fontsize": "14",
-				"fontfamily": "default",
-				"fontcolor": "#ffffff"
-			}
-		},
-		{
-			"id": "totalPolygons",
-			"type": "label",
-			"data": {
-				"value": "",
-				"isr": false,
-				"css": "",
-				"margintop": "10",
-				"labeltext": "",
-				"labelposition": "hidden",
-				"helptext": "",
-				"helpposition": "bottom",
-				"fontsize": "14",
-				"fontfamily": "default",
-				"fontcolor": "#ffffff"
-			}
-		},
-		{
-			"id": "empreinte",
-			"type": "select",
-			"data": {
-				"subtype": "select",
-				"value": "exposition",
-				"isr": false,
-				"css": "",
-				"margintop": "10",
-				"labeltext": "<span style=\"color:white;\">Utiliser une empreinte</span>",
-				"labelposition": "left",
-				"helptext": "",
-				"helpposition": "bottom",
-				"required": false,
-				"onchange": "rpgm.sendToJavascript('updateMap', list())",
-				"condition": "",
-				"choices": [
-					{
-						"value": "exposition",
-						"text": "Aucune (exposition)"
-					},
-					{
-						"value": "babet",
-						"text": "Tempête Babet"
-					}
-				],
-				"choicesvalues": "",
-				"choicestexts": ""
-			}
-		},
-		{
-			"id": "",
-			"type": "button",
-			"data": {
-				"value": "Reset view",
-				"isr": false,
-				"css": "",
-				"margintop": "10",
-				"labeltext": "",
-				"labelposition": "hidden",
-				"helptext": "",
-				"helpposition": "bottom",
-				"onpress": "setDefaultView()",
-				"buttonsize": "md",
-				"buttondesign": "primary"
-			}
-		},
-		{
-			"id": "",
 			"type": "columns",
 			"data": {
 				"css": "",
-				"margintop": "10",
+				"margintop": "",
 				"labeltext": "",
 				"labelposition": "hidden",
 				"helptext": "",
 				"helpposition": "bottom",
 				"columnswidths": [
-					4,
-					4,
+					8,
 					4
 				],
 				"columnspadding": 10
 			},
 			"elements": [
 				{
-					"id": "var_1",
-					"type": "graph",
+					"id": "",
+					"type": "box",
 					"data": {
-						"css": "height:400px; width:500px;",
-						"margintop": "10",
+						"css": "",
+						"margintop": 10,
 						"labeltext": "",
 						"labelposition": "hidden",
 						"helptext": "",
 						"helpposition": "bottom",
-						"graph": "",
-						"graphwidth": "100",
-						"graphheight": "500"
-					}
+						"boxdesign": "none",
+						"boxheader": ""
+					},
+					"elements": [
+						{
+							"id": "",
+							"type": "label",
+							"data": {
+								"value": "<div id=\"map\"></div>",
+								"isr": false,
+								"css": "",
+								"margintop": "10",
+								"labeltext": "",
+								"labelposition": "hidden",
+								"helptext": "",
+								"helpposition": "bottom",
+								"fontsize": "14",
+								"fontfamily": "default",
+								"fontcolor": "#000000"
+							}
+						}
+					]
+				},
+				{
+					"id": "",
+					"type": "box",
+					"data": {
+						"css": "",
+						"margintop": 10,
+						"labeltext": "",
+						"labelposition": "hidden",
+						"helptext": "",
+						"helpposition": "bottom",
+						"boxdesign": "none",
+						"boxheader": ""
+					},
+					"elements": [
+						{
+							"id": "",
+							"type": "tabs",
+							"data": {
+								"css": "",
+								"margintop": "",
+								"labeltext": "",
+								"labelposition": "hidden",
+								"helptext": "",
+								"helpposition": "bottom",
+								"tabsnames": [
+									"Résidence",
+									"2",
+									"3"
+								],
+								"tabscurrent": "1"
+							},
+							"elements": [
+								{
+									"id": "var_1",
+									"type": "graph",
+									"data": {
+										"css": "height:350px; width:450px;",
+										"margintop": "10",
+										"labeltext": "",
+										"labelposition": "hidden",
+										"helptext": "",
+										"helpposition": "bottom",
+										"graph": "",
+										"graphwidth": "100",
+										"graphheight": "500"
+									}
+								},
+								{
+									"id": "var_2",
+									"type": "graph",
+									"data": {
+										"css": "height:350px; width:450px;",
+										"margintop": "10",
+										"labeltext": "",
+										"labelposition": "hidden",
+										"helptext": "",
+										"helpposition": "bottom",
+										"graph": "",
+										"graphwidth": "100",
+										"graphheight": "500"
+									}
+								},
+								{
+									"id": "var_3",
+									"type": "graph",
+									"data": {
+										"css": "height:350px; width:450px;",
+										"margintop": "10",
+										"labeltext": "",
+										"labelposition": "hidden",
+										"helptext": "",
+										"helpposition": "bottom",
+										"graph": "",
+										"graphwidth": "100",
+										"graphheight": "500"
+									}
+								}
+							]
+						}
+					]
 				},
 				{
 					"id": "",
@@ -162,6 +162,138 @@
 						"boxheader": ""
 					},
 					"elements": []
+				}
+			]
+		},
+		{
+			"id": "",
+			"type": "columns",
+			"data": {
+				"css": "",
+				"margintop": "10",
+				"labeltext": "&nbsp;",
+				"labelposition": "top",
+				"helptext": "",
+				"helpposition": "bottom",
+				"columnswidths": [
+					2,
+					4,
+					6
+				],
+				"columnspadding": 10
+			},
+			"elements": [
+				{
+					"id": "",
+					"type": "box",
+					"data": {
+						"css": "",
+						"margintop": 10,
+						"labeltext": "",
+						"labelposition": "hidden",
+						"helptext": "",
+						"helpposition": "bottom",
+						"boxdesign": "none",
+						"boxheader": ""
+					},
+					"elements": [
+						{
+							"id": "",
+							"type": "button",
+							"data": {
+								"value": "Reset view",
+								"isr": false,
+								"css": "",
+								"margintop": "10",
+								"labeltext": " &nbsp;",
+								"labelposition": "top",
+								"helptext": "",
+								"helpposition": "bottom",
+								"onpress": "setDefaultView()",
+								"buttonsize": "md",
+								"buttondesign": "dark"
+							}
+						}
+					]
+				},
+				{
+					"id": "",
+					"type": "box",
+					"data": {
+						"css": "",
+						"margintop": 10,
+						"labeltext": "",
+						"labelposition": "hidden",
+						"helptext": "",
+						"helpposition": "bottom",
+						"boxdesign": "none",
+						"boxheader": ""
+					},
+					"elements": [
+						{
+							"id": "empreinte",
+							"type": "select",
+							"data": {
+								"subtype": "select",
+								"value": "exposition",
+								"isr": false,
+								"css": "",
+								"margintop": "10",
+								"labeltext": "<span style=\"color:white;\">Utiliser une empreinte</span>",
+								"labelposition": "top",
+								"helptext": "",
+								"helpposition": "bottom",
+								"required": false,
+								"onchange": "rpgm.sendToJavascript('updateMap', list())",
+								"condition": "",
+								"choices": [
+									{
+										"value": "exposition",
+										"text": "Aucune (exposition)"
+									},
+									{
+										"value": "babet",
+										"text": "Tempête Babet"
+									}
+								],
+								"choicesvalues": "",
+								"choicestexts": ""
+							}
+						}
+					]
+				},
+				{
+					"id": "",
+					"type": "box",
+					"data": {
+						"css": "",
+						"margintop": 10,
+						"labeltext": "",
+						"labelposition": "hidden",
+						"helptext": "",
+						"helpposition": "bottom",
+						"boxdesign": "none",
+						"boxheader": ""
+					},
+					"elements": [
+						{
+							"id": "totalPolygons",
+							"type": "label",
+							"data": {
+								"value": "",
+								"isr": false,
+								"css": "",
+								"margintop": "10",
+								"labeltext": "",
+								"labelposition": "top",
+								"helptext": "",
+								"helpposition": "bottom",
+								"fontsize": "14",
+								"fontfamily": "default",
+								"fontcolor": "#ffffff"
+							}
+						}
+					]
 				}
 			]
 		}

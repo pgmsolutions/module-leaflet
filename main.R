@@ -48,7 +48,6 @@ plotlyTitle <- function(pays, region, dpt, canton, insee, commune)
 
 onRPGMJavascript <- function(message, data){
     if(message == 'mapState'){
-        gui.setValue('this', 'lastBounds', paste0('North lat: ', round(data$view$northLat, 3), ' East lng: ', round(data$view$eastLng, 3), ' South lat: ', round(data$view$southLat, 3), ' West lng: ', round(data$view$westLng, 3), ' Zoom lvl: ', data$view$zoomLevel));
         total <- 0
         z <- getLvlPolygonToDisplay(data$view$zoomLevel)
         color <- getColorLvlPolygon(z)
@@ -79,7 +78,7 @@ onRPGMJavascript <- function(message, data){
         }
         
         # Erase previous drawings and draw all polygons addded in queue
-        gui.setValue('this', 'totalPolygons', paste0('Total multi-polygons drawed: ', total));
+        gui.setValue('this', 'totalPolygons', paste0('Total multi-polygons drawed: ', total, '<br>North lat: ', round(data$view$northLat, 3), ', East lng: ', round(data$view$eastLng, 3), ', South lat: ', round(data$view$southLat, 3), ', West lng: ', round(data$view$westLng, 3), ', Zoom lvl: ', data$view$zoomLevel));
         rpgm.sendToJavascript('drawGeoJSON', list());
         rpgm.sendToJavascript('updateLegend', list(content="Légende"));
     }
@@ -102,8 +101,13 @@ onRPGMJavascript <- function(message, data){
         )
         layout = list(
             title = plotlyTitle(selected_shape$COUNTRY, selected_shape$NAME_1, selected_shape$NAME_2, selected_shape$NAME_3, selected_shape$NAME_4, selected_shape$NAME_5),
-            height = 400,
-            width = 500
+            height = 350,
+            width = 450,
+            font = list(
+                color = '#ecf0f1'
+            ),
+            plot_bgcolor = '#2e3134',
+            paper_bgcolor = '#2e3134'
         )
         gui.setValue('this', 'var_1', list(data = data_plotly, layout = layout))
         gui.show('this', 'var_1')
