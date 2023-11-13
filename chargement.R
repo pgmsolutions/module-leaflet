@@ -114,3 +114,4 @@ for(i in 1:length(shape))
 }
 
 empreinte <- "exposition"
+gui.hide(rpgm.step('main', 'leaflet'), 'var_1')

@@ -116,8 +116,8 @@
 			}
 		},
 		{
-			"id": "var_1",
-			"type": "graph",
+			"id": "",
+			"type": "columns",
 			"data": {
 				"css": "",
 				"margintop": "10",
@@ -125,10 +125,45 @@
 				"labelposition": "hidden",
 				"helptext": "",
 				"helpposition": "bottom",
-				"graph": "",
-				"graphwidth": "100",
-				"graphheight": "500"
-			}
+				"columnswidths": [
+					4,
+					4,
+					4
+				],
+				"columnspadding": 10
+			},
+			"elements": [
+				{
+					"id": "var_1",
+					"type": "graph",
+					"data": {
+						"css": "height:400px; width:500px;",
+						"margintop": "10",
+						"labeltext": "",
+						"labelposition": "hidden",
+						"helptext": "",
+						"helpposition": "bottom",
+						"graph": "",
+						"graphwidth": "100",
+						"graphheight": "500"
+					}
+				},
+				{
+					"id": "",
+					"type": "box",
+					"data": {
+						"css": "",
+						"margintop": 10,
+						"labeltext": "",
+						"labelposition": "hidden",
+						"helptext": "",
+						"helpposition": "bottom",
+						"boxdesign": "none",
+						"boxheader": ""
+					},
+					"elements": []
+				}
+			]
 		}
 	],
 	"submitbutton": false,

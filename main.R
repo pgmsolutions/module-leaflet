@@ -104,7 +104,8 @@ onRPGMJavascript <- function(message, data){
             title = plotlyTitle(selected_shape$COUNTRY, selected_shape$NAME_1, selected_shape$NAME_2, selected_shape$NAME_3, selected_shape$NAME_4, selected_shape$NAME_5),
             height = 400,
             width = 500
-        );
-        gui.setValue('this', 'var_1', list(data = data_plotly, layout = layout));
+        )
+        gui.setValue('this', 'var_1', list(data = data_plotly, layout = layout))
+        gui.show('this', 'var_1')
     }
 }
