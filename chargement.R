@@ -54,7 +54,7 @@ getColorLvlPolygon <- function(lvlPolygon)
 }
 
 #var_1 = appartement/maison
-donnees <- data.table::fread("aportfolios.csv", sep =";", na.strings=c("",NA,"NULL"), select=c("lat", "lng", "prime_ttc", "var_1"))
+donnees <- data.table::fread("donnees/aportfolios.csv", sep =";", na.strings=c("",NA,"NULL"), select=c("lat", "lng", "prime_ttc", "var_1"))
 IS_NULL <- is.na(donnees$lat) | is.na(donnees$lng)
 
 donnees_null <- donnees[IS_NULL, ]
