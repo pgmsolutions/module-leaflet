@@ -5,7 +5,7 @@
 	"description": "Example on how to integrate Javascript in RPGM with Leaflet.",
 	"wd": "program",
 	"logo": "",
-	"css": "#map { height: 500px; }",
+	"css": "#map { height: 500px; }\r\n.choices {\r\n    color:white;\r\n}\r\n\r\n.choices__inner {\r\n    background: #34495e;\r\n}\r\n\r\n.choices[data-type*=select-one] .choices__input {\r\n    background:black;\r\n}\r\n\r\n.choices__list .choices__list--dropdown {\r\n    background: black;\r\n}\r\n\r\n.choices__list--dropdown .choices__item--selectable, .choices__list[aria-expanded] .choices__item--selectable\r\n{\r\n    background: black;\r\n}\r\n\r\n\r\n\r\n.choices__list--dropdown .choices__item--selectable.is-highlighted, .choices__list[aria-expanded] .choices__item--selectable.is-highlighted\r\n{\r\n    background: #34495e;\r\n}\r\n\r\n.choices__list--dropdown .choices__item, .choices__list[aria-expanded] .choices__item\r\n{\r\n    background:black;\r\n}\r\n",
 	"list": "hide",
 	"rconsole": "r",
 	"outputfolder": "{{name}}_{{datetime}}",
