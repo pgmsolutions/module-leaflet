@@ -32,19 +32,6 @@ window.MapManager = new class {
     initialize(){
         RPGM.on('didEnterStep', this.initializeMap); // Function called when entered a new step
         RPGM.on('didReceiveJavascriptMessage', (message, data)=>{
-            /*if(message === 'resetDrawings'){
-                this.removeAllDrawings();
-            }
-            else if(message === 'drawPolygon'){
-                this.addPolygon(data.points.map(p => [p.lat, p.lng]), data.color);
-            }
-            else if(message === 'addPolygonToQueue'){
-                this.addToQueue(data.points.map(p => [p.lat, p.lng]), data.color);
-            }
-            else if(message === 'drawQueue'){
-                this.drawQueue();
-            }
-            else*/
             if(message === 'addGeoJSON'){
                 this.addGeoJSON(data.points, data.id, data.tooltip, data.color);
             }
@@ -53,6 +40,9 @@ window.MapManager = new class {
             }
             else if(message === 'updateLegend'){
                 this.updateLegend(data.content);
+            }
+            else if(message === 'updateMap'){
+                this.sendChange();
             }
         });
         this.initializeMap(); // Try to initialize now for RPGM Server
@@ -257,7 +247,6 @@ window.MapManager = new class {
             zoomLevel: this._map.getZoom(),
             tooltip: e.target.feature.properties.tooltip
         });
-        //this._map.fitBounds(e.target.getBounds());
     }
     updateLegend(content){
         this._legendDiv.innerHTML = content;

@@ -86,3 +86,31 @@ for(i in 1:length(shape))
 }
 script.setProgress(TRUE, 100L, "Entering GUI...")
 
+vents <- data.table::fread("donnees/synop.csv", sep =";", na.strings=c("",NA,"NULL"), select=c("Coordonnees", "Rafale sur les 10 dernieres minutes"))
+colnames(vents) <- c("coord", "rafales")
+vents <- vents[!is.na(vents$coord) & !is.na(vents$rafales)]
+vents[, c("lat", "lng")] <- data.table::tstrsplit(vents$coord, ", ")
+vents$coord <- NULL
+vents$rafales <- vents$rafales*3.6
+
+data.table::setDF(vents)
+
+vents_points <- vents[c("lat", "lng")]
+vents_points_sf <- sf::st_as_sf(vents_points, coords = c('lng', 'lat'), crs = sf::st_crs(shape[[1]]))
+
+
+Rafales <- Rafales_couleurs <- list()
+for(i in 1:length(shape))
+{
+#    script.setProgress(TRUE, round(100*(n_shape+i-1)/(2*n_shape)), paste0("Importing premiums... ", i, "/", n_shape))
+    Z <- as.data.frame(sf::st_within(vents_points_sf, shape[[i]])) #dans le polygone ou non, tester si plus performant
+    Rafales[[i]] <- as.vector(tapply(vents$rafales[Z$row.id], factor(Z$col.id, levels = 1:length(shape[[i]]$geometry)), max))
+    Rafales[[i]][is.na(Rafales[[i]])] <- 0
+    if(length(Rafales[[i]]) > 1)
+        Rafales_couleurs[[i]] <- interpCol2(Rafales[[i]], c("#3498db", "#2980b9", "#1c2e30"), c(0, 0.5, 1))
+    else
+        Rafales_couleurs[[i]] <- "#2980b9"
+    Rafales_couleurs[[i]][Rafales[[i]] == 0] <- couleur_zero
+}
+
+empreinte <- "exposition"

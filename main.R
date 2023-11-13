@@ -11,16 +11,30 @@ doDisplayPolygon <- function(Z, view)
 formatPolygonForLeaflet <- function(Z)
     return(lapply(seq_len(nrow(Z)), function(k) list(Z[k, 1], Z[k, 2])))
 
-leafletTooltip <- function(pays, region, dpt, canton, insee, commune, prime)
+
+leafletTooltipGeo <- function(pays, region, dpt, canton, insee, commune)
     return(paste0(
         "Pays : <strong>", pays, "</strong>",
         `if`(is.null(region), "", paste0("<br>Région : <strong>", region, "</strong>")),
         `if`(is.null(dpt), "", paste0("<br>Département : <strong>", dpt, "</strong>")),
         `if`(is.null(canton), "", paste0("<br>Canton : <strong>", canton, "</strong>")),
         `if`(is.null(insee), "", paste0("<br>Insee : <strong>", insee, "</strong>")),
-        `if`(is.null(commune), "", paste0("<br>Commune : <strong>", commune, "</strong>")),
+        `if`(is.null(commune), "", paste0("<br>Commune : <strong>", commune, "</strong>"))
+    ))
+
+
+leafletTooltipPrimes <- function(pays, region, dpt, canton, insee, commune, prime)
+    return(paste0(
+        leafletTooltipGeo(pays, region, dpt, canton, insee, commune),
         "<br><br>Primes : <strong>", format(round(prime), big.mark = " "), "€</strong>."
     ))
+
+leafletTooltipVents <- function(pays, region, dpt, canton, insee, commune, vent)
+    return(paste0(
+        leafletTooltipGeo(pays, region, dpt, canton, insee, commune),
+        "<br><br>Vents : <strong>", format(round(vent), big.mark = " "), "km/h</strong>."
+    ))
+
 
 plotlyTitle <- function(pays, region, dpt, canton, insee, commune)
     return(paste0(
@@ -56,7 +70,10 @@ onRPGMJavascript <- function(message, data){
             }
             if(l > 1)
             {
-                rpgm.sendToJavascript('addGeoJSON', list(points=P, id=i, tooltip=leafletTooltip(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], Primes[[z]][i]), color=Primes_couleurs[[z]][i]));
+                if(empreinte == "exposition")
+                    rpgm.sendToJavascript('addGeoJSON', list(points=P, id=i, tooltip=leafletTooltipPrimes(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], Primes[[z]][i]), color=Primes_couleurs[[z]][i]))
+                else if(empreinte == "babet")
+                    rpgm.sendToJavascript('addGeoJSON', list(points=P, id=i, tooltip=leafletTooltipVents(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], Rafales[[z]][i]), color=Rafales_couleurs[[z]][i]))
                 total <- total+1
             }
         }

@@ -69,6 +69,36 @@
 			}
 		},
 		{
+			"id": "empreinte",
+			"type": "select",
+			"data": {
+				"subtype": "select",
+				"value": "exposition",
+				"isr": false,
+				"css": "",
+				"margintop": "10",
+				"labeltext": "<span style=\"color:white;\">Utiliser une empreinte</span>",
+				"labelposition": "left",
+				"helptext": "",
+				"helpposition": "bottom",
+				"required": false,
+				"onchange": "rpgm.sendToJavascript('updateMap', list())",
+				"condition": "",
+				"choices": [
+					{
+						"value": "exposition",
+						"text": "Aucune (exposition)"
+					},
+					{
+						"value": "babet",
+						"text": "Tempête Babet"
+					}
+				],
+				"choicesvalues": "",
+				"choicestexts": ""
+			}
+		},
+		{
 			"id": "",
 			"type": "button",
 			"data": {
