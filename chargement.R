@@ -54,7 +54,7 @@ getColorLvlPolygon <- function(lvlPolygon)
 }
 
 #var_1 = appartement/maison
-donnees <- data.table::fread("donnees/aportfolios.csv", sep =";", na.strings=c("",NA,"NULL"), select=c("lat", "lng", "prime_ttc", "var_1"))
+donnees <- data.table::fread("donnees/aportfolios.csv", sep =";", na.strings=c("",NA,"NULL"), select=c("lat", "lng", "prime_ttc", "var_1", "var_2", "var_3"), encoding = 'UTF-8')
 IS_NULL <- is.na(donnees$lat) | is.na(donnees$lng)
 
 donnees_null <- donnees[IS_NULL, ]
@@ -115,3 +115,5 @@ for(i in 1:length(shape))
 
 empreinte <- "exposition"
 gui.hide(rpgm.step('main', 'leaflet'), 'var_1')
+gui.hide(rpgm.step('main', 'leaflet'), 'var_2')
+gui.hide(rpgm.step('main', 'leaflet'), 'var_3')

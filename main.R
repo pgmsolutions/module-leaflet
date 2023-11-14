@@ -46,6 +46,41 @@ plotlyTitle <- function(pays, region, dpt, canton, insee, commune)
         `if`(is.null(commune), "", paste0(", <b>", commune, "</b>"))
     ))
 
+plotly_graph <- function(data)
+{
+        z <- getLvlPolygonToDisplay(data$zoomLevel)
+        selected_shape <- shape[[z]][data$id, ]
+        assures <- donnees[t(sf::st_contains(selected_shape, donnees_points_sf, sparse = FALSE)), ]
+
+        #layout commun
+        layout = list(
+            title = plotlyTitle(selected_shape$COUNTRY, selected_shape$NAME_1, selected_shape$NAME_2, selected_shape$NAME_3, selected_shape$NAME_4, selected_shape$NAME_5),
+            height = 350,
+            width = 450,
+            font = list(
+                color = '#ecf0f1'
+            ),
+            plot_bgcolor = '#2e3134',
+            paper_bgcolor = '#2e3134'
+        )
+
+        #graphiques 
+        for(var in paste0("var_", 1:3))
+        {
+            donnees_plotly <- table(assures[[var]])
+            data_plotly = list(
+                values= as.list(as.vector(donnees_plotly)),
+                labels= as.list(names(donnees_plotly)),
+                type= 'pie',
+                marker = list(
+                    colors = c('#3498db', '#c0392b')
+                )
+            )
+            gui.setValue('this', var, list(data = data_plotly, layout = layout))
+            gui.show('this', var)
+        }
+}
+
 onRPGMJavascript <- function(message, data){
     if(message == 'mapState'){
         total <- 0
@@ -86,30 +121,6 @@ onRPGMJavascript <- function(message, data){
         print(paste0('User clicked on lat: ',data$coordinates$lat, 'and lng: ', data$coordinates$lng));
     }
     else if(message == 'zoneClick'){
-        print(paste0('User clicked on zone id: ', data$id));
-        z <- getLvlPolygonToDisplay(data$zoomLevel)
-        selected_shape <- shape[[z]][data$id, ]
-        assures <- donnees[t(sf::st_contains(selected_shape, donnees_points_sf, sparse = FALSE)), ]
-        donnees_plotly <- table(assures$var_1)
-        data_plotly = list(
-            values= as.list(as.vector(donnees_plotly)),
-            labels= as.list(names(donnees_plotly)),
-            type= 'pie',
-            marker = list(
-                colors = c('#3498db', '#c0392b')
-            )
-        )
-        layout = list(
-            title = plotlyTitle(selected_shape$COUNTRY, selected_shape$NAME_1, selected_shape$NAME_2, selected_shape$NAME_3, selected_shape$NAME_4, selected_shape$NAME_5),
-            height = 350,
-            width = 450,
-            font = list(
-                color = '#ecf0f1'
-            ),
-            plot_bgcolor = '#2e3134',
-            paper_bgcolor = '#2e3134'
-        )
-        gui.setValue('this', 'var_1', list(data = data_plotly, layout = layout))
-        gui.show('this', 'var_1')
-    }
+        plotly_graph(data)
+   }
 }
