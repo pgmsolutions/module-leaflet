@@ -106,7 +106,7 @@ onRPGMJavascript <- function(message, data){
             {
                 if(empreinte == "exposition")
                     rpgm.sendToJavascript('addGeoJSON', list(points=P, id=i, tooltip=leafletTooltipPrimes(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], Primes[[z]][i]), color=Primes_couleurs[[z]][i]))
-                else if(empreinte == "babet")
+                else if(empreinte == "ciaran")
                     rpgm.sendToJavascript('addGeoJSON', list(points=P, id=i, tooltip=leafletTooltipVents(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], Rafales[[z]][i]), color=Rafales_couleurs[[z]][i]))
                 total <- total+1
             }
