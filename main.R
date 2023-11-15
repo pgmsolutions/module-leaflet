@@ -23,18 +23,11 @@ leafletTooltipGeo <- function(pays, region, dpt, canton, insee, commune)
     ))
 
 
-leafletTooltipPrimes <- function(pays, region, dpt, canton, insee, commune, prime)
+leafletTooltipDonnees <- function(pays, region, dpt, canton, insee, commune, donnee, nom_donnee, unite_donnee)
     return(paste0(
         leafletTooltipGeo(pays, region, dpt, canton, insee, commune),
-        "<br><br>Primes : <strong>", format(round(prime), big.mark = " "), "€</strong>."
+        "<br><br>", nom_donnee, " : <strong>", format(round(donnee), big.mark = " "), unite_donnee, "</strong>."
     ))
-
-leafletTooltipVents <- function(pays, region, dpt, canton, insee, commune, vent)
-    return(paste0(
-        leafletTooltipGeo(pays, region, dpt, canton, insee, commune),
-        "<br><br>Vents : <strong>", format(round(vent), big.mark = " "), "km/h</strong>."
-    ))
-
 
 plotlyTitle <- function(pays, region, dpt, canton, insee, commune)
     return(paste0(
@@ -105,9 +98,9 @@ onRPGMJavascript <- function(message, data){
             if(l > 1)
             {
                 if(empreinte == "exposition")
-                    rpgm.sendToJavascript('addGeoJSON', list(points=P, id=i, tooltip=leafletTooltipPrimes(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], Primes[[z]][i]), color=Primes_couleurs[[z]][i]))
+                    rpgm.sendToJavascript('addGeoJSON', list(points=P, id=i, tooltip=leafletTooltipDonnees(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], DonneesCarte[["Primes"]][[z]][i], "Primes", "€"), color=DonneesCarte_couleurs[["Primes"]][[z]][i]))
                 else if(empreinte == "ciaran")
-                    rpgm.sendToJavascript('addGeoJSON', list(points=P, id=i, tooltip=leafletTooltipVents(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], Rafales[[z]][i]), color=Rafales_couleurs[[z]][i]))
+                    rpgm.sendToJavascript('addGeoJSON', list(points=P, id=i, tooltip=leafletTooltipDonnees(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], DonneesCarte[["Vents"]][[z]][i], "Vents", "km/h"), color=DonneesCarte_couleurs[["Vents"]][[z]][i]))
                 total <- total+1
             }
         }

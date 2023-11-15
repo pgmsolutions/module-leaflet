@@ -71,49 +71,63 @@ couleur_max <- '#c0392b'
 couleur_median <- '#e67e22'
 couleur_zero <- '#bdc3c7'
 
-Primes <- Primes_couleurs <- list()
+DonneesCarte <- DonneesCarte_couleurs <- list() 
+DonneesCarte[["Primes"]] <- DonneesCarte_couleurs[["Primes"]] <- list()
 for(i in 1:length(shape))
 {
     script.setProgress(TRUE, round(100*(n_shape+i-1)/(2*n_shape)), paste0("Importing premiums... ", i, "/", n_shape))
     Z <- as.data.frame(sf::st_within(donnees_points_sf, shape[[i]])) #dans le polygone ou non, tester si plus performant
-    Primes[[i]] <- as.vector(tapply(donnees$prime_ttc[Z$row.id], factor(Z$col.id, levels = 1:length(shape[[i]]$geometry)), sum))
-    Primes[[i]][is.na(Primes[[i]])] <- 0
-    if(length(Primes[[i]]) > 1)
-        Primes_couleurs[[i]] <- interpCol(Primes[[i]], couleur_min, couleur_max)
+    DonneesCarte[["Primes"]][[i]] <- as.vector(tapply(donnees$prime_ttc[Z$row.id], factor(Z$col.id, levels = 1:length(shape[[i]]$geometry)), sum))
+    DonneesCarte[["Primes"]][[i]][is.na(DonneesCarte[["Primes"]][[i]])] <- 0
+    if(length(DonneesCarte[["Primes"]][[i]]) > 1)
+        DonneesCarte_couleurs[["Primes"]][[i]] <- interpCol(DonneesCarte[["Primes"]][[i]], couleur_min, couleur_max)
     else
-        Primes_couleurs[[i]] <- couleur_median
-    Primes_couleurs[[i]][Primes[[i]] == 0] <- couleur_zero
+        DonneesCarte_couleurs[["Primes"]][[i]] <- couleur_median
+    DonneesCarte_couleurs[["Primes"]][[i]][DonneesCarte[["Primes"]][[i]] == 0] <- couleur_zero
 }
 script.setProgress(TRUE, 100L, "Entering GUI...")
 
-vents <- data.table::fread("donnees/synop.csv", sep =";", na.strings=c("",NA,"NULL"), select=c("Coordonnees", "Rafale sur les 10 dernieres minutes"))
-colnames(vents) <- c("coord", "rafales")
-vents <- vents[!is.na(vents$coord) & !is.na(vents$rafales)]
-vents[, c("lat", "lng")] <- data.table::tstrsplit(vents$coord, ", ")
-vents$coord <- NULL
-vents$rafales <- vents$rafales*3.6
-
-data.table::setDF(vents)
-
-vents_points <- vents[c("lat", "lng")]
-vents_points_sf <- sf::st_as_sf(vents_points, coords = c('lng', 'lat'), crs = sf::st_crs(shape[[1]]))
-
-
-Rafales <- Rafales_couleurs <- list()
-for(i in 1:length(shape))
+loadDonneesVents <- function(path)
 {
-#    script.setProgress(TRUE, round(100*(n_shape+i-1)/(2*n_shape)), paste0("Importing premiums... ", i, "/", n_shape))
-    Z <- as.data.frame(sf::st_within(vents_points_sf, shape[[i]])) #dans le polygone ou non, tester si plus performant
-    Rafales[[i]] <- as.vector(tapply(vents$rafales[Z$row.id], factor(Z$col.id, levels = 1:length(shape[[i]]$geometry)), max))
-    Rafales[[i]][is.na(Rafales[[i]])] <- 0
-    if(length(Rafales[[i]]) > 1)
-        Rafales_couleurs[[i]] <- interpCol2(Rafales[[i]], c("#3498db", "#2980b9", "#1c2e30"), c(0, 0.5, 1))
-    else
-        Rafales_couleurs[[i]] <- "#2980b9"
-    Rafales_couleurs[[i]][Rafales[[i]] == 0] <- couleur_zero
+    gui.show(rpgm.step('main', 'leaflet'), 'progressbar_donnees')
+    gui.setProperties("this", "progressbar_donnees", list(value = 100, progressdescription = "0%"))
+    vents <- data.table::fread(path, sep =";", na.strings=c("",NA,"NULL"), select=c("Coordonnees", "Rafale sur les 10 dernieres minutes"))
+    colnames(vents) <- c("coord", "rafales")
+    vents <- vents[!is.na(vents$coord) & !is.na(vents$rafales)]
+    vents[, c("lat", "lng")] <- data.table::tstrsplit(vents$coord, ", ")
+    vents$coord <- NULL
+    vents$rafales <- vents$rafales*3.6
+
+    data.table::setDF(vents)
+
+    vents_points <- vents[c("lat", "lng")]
+    vents_points_sf <- sf::st_as_sf(vents_points, coords = c('lng', 'lat'), crs = sf::st_crs(shape[[1]]))
+
+    DonneesCarte[["Vents"]] <<- DonneesCarte_couleurs[["Vents"]] <<- list()
+    for(i in 1:length(shape))
+    {
+        Z <- as.data.frame(sf::st_within(vents_points_sf, shape[[i]])) #dans le polygone ou non, tester si plus performant
+        DonneesCarte[["Vents"]][[i]] <<- as.vector(tapply(vents$rafales[Z$row.id], factor(Z$col.id, levels = 1:length(shape[[i]]$geometry)), max))
+        DonneesCarte[["Vents"]][[i]][is.na(DonneesCarte[["Vents"]][[i]])] <<- 0
+        if(length(DonneesCarte[["Vents"]][[i]]) > 1)
+            DonneesCarte_couleurs[["Vents"]][[i]] <<- interpCol2(DonneesCarte[["Vents"]][[i]], c("#3498db", "#2980b9", "#1c2e30"), c(0, 0.5, 1))
+        else
+            DonneesCarte_couleurs[["Vents"]][[i]] <<- "#2980b9"
+        DonneesCarte_couleurs[["Vents"]][[i]][DonneesCarte[["Vents"]][[i]] == 0] <<- couleur_zero
+        k <- round(100*i/(n_shape))
+        gui.setProperties("this", "progressbar_donnees", list(value = k, progressdescription = `if`(k < 25, paste0(k, "%"), paste0("Import... ", k, "%"))))
+    }
+}
+
+loadDonnees <- function(nom, path)
+{
+    if(nom == "ciaran")
+        if(is.null(DonneesCarte[["Vents"]]))
+            loadDonneesVents(path)
 }
 
 empreinte <- "exposition"
 gui.hide(rpgm.step('main', 'leaflet'), 'var_1')
 gui.hide(rpgm.step('main', 'leaflet'), 'var_2')
 gui.hide(rpgm.step('main', 'leaflet'), 'var_3')
+gui.hide(rpgm.step('main', 'leaflet'), 'progressbar_donnees')

@@ -244,7 +244,7 @@
 								"helptext": "",
 								"helpposition": "bottom",
 								"required": false,
-								"onchange": "rpgm.sendToJavascript('updateMap', list())",
+								"onchange": "loadDonnees(empreinte, \"donnees/synop.csv\"); rpgm.sendToJavascript('updateMap', list()); gui.hide(\"this\", 'progressbar_donnees')",
 								"condition": "",
 								"choices": [
 									{
@@ -258,6 +258,23 @@
 								],
 								"choicesvalues": "",
 								"choicestexts": ""
+							}
+						},
+						{
+							"id": "progressbar_donnees",
+							"type": "progress",
+							"data": {
+								"subtype": "progressbar",
+								"value": "",
+								"isr": false,
+								"css": "",
+								"margintop": "10",
+								"labeltext": "",
+								"labelposition": "top",
+								"helptext": "",
+								"helpposition": "bottom",
+								"progresscolor": "#7289da",
+								"progressdescription": "%"
 							}
 						}
 					]
