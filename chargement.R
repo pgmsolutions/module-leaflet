@@ -4,23 +4,23 @@ script.setProgress(TRUE, 0L, "Importing shape files... 1/6")
 
 shape$country <- sf::st_read("sf/gadm41_FRA_0.shp")
 shape$country <- sf::st_simplify(shape$country, preserveTopology = TRUE, dTolerance = 30)
-script.setProgress(TRUE, 8L, "Importing shape files... 2/6")
+script.setProgress(TRUE, 17L, "Importing shape files... 2/6")
 
 shape$region <- sf::st_read("sf/gadm41_FRA_1.shp")
 shape$region <- sf::st_simplify(shape$region, preserveTopology = TRUE, dTolerance = 30)
-script.setProgress(TRUE, 17L, "Importing shape files... 3/6")
+script.setProgress(TRUE, 33L, "Importing shape files... 3/6")
 
 shape$departement <- sf::st_read("sf/gadm41_FRA_2.shp")
-script.setProgress(TRUE, 25L, "Importing shape files... 4/6")
+script.setProgress(TRUE, 50L, "Importing shape files... 4/6")
 
 shape[[4]] <- sf::st_read("sf/gadm41_FRA_3.shp")
-script.setProgress(TRUE, 33L, "Importing shape files... 5/6")
+script.setProgress(TRUE, 67L, "Importing shape files... 5/6")
 
 shape[[5]] <- sf::st_read("sf/gadm41_FRA_4.shp")
-script.setProgress(TRUE, 42L, "Importing shape files... 6/6")
+script.setProgress(TRUE, 83L, "Importing shape files... 6/6")
 
 shape[[6]] <- sf::st_read("sf/gadm41_FRA_5.shp")
-script.setProgress(TRUE, 50L, "Importing shape files... 6/6")
+script.setProgress(TRUE, 100L, "Importing shape files... 6/6")
 
 getLvlPolygonToDisplay <- function(zoomLevel)
 {
@@ -53,44 +53,48 @@ getColorLvlPolygon <- function(lvlPolygon)
         return(rgb(192, 57, 43, maxColorValue=255))
 }
 
-#var_1 = appartement/maison
-donnees <- data.table::fread("donnees/aportfolios.csv", sep =";", na.strings=c("",NA,"NULL"), select=c("lat", "lng", "prime_ttc", "var_1", "var_2", "var_3"), encoding = 'UTF-8')
-IS_NULL <- is.na(donnees$lat) | is.na(donnees$lng)
-
-donnees_null <- donnees[IS_NULL, ]
-donnees <- donnees[!IS_NULL, ]
-
-data.table::setDF(donnees)
-data.table::setDF(donnees_null)
-
-donnees_points <- donnees[c("lat", "lng")]
-donnees_points_sf <- sf::st_as_sf(donnees_points, coords = c('lng', 'lat'), crs = sf::st_crs(shape[[1]]))
-
 couleur_min <- '#f1c40f'
 couleur_max <- '#c0392b'
 couleur_median <- '#e67e22'
 couleur_zero <- '#bdc3c7'
 
 DonneesCarte <- DonneesCarte_couleurs <- list() 
-DonneesCarte[["Primes"]] <- DonneesCarte_couleurs[["Primes"]] <- list()
-for(i in 1:length(shape))
+loadDonneesPrimes <- function(path)
 {
-    script.setProgress(TRUE, round(100*(n_shape+i-1)/(2*n_shape)), paste0("Importing premiums... ", i, "/", n_shape))
-    Z <- as.data.frame(sf::st_within(donnees_points_sf, shape[[i]])) #dans le polygone ou non, tester si plus performant
-    DonneesCarte[["Primes"]][[i]] <- as.vector(tapply(donnees$prime_ttc[Z$row.id], factor(Z$col.id, levels = 1:length(shape[[i]]$geometry)), sum))
-    DonneesCarte[["Primes"]][[i]][is.na(DonneesCarte[["Primes"]][[i]])] <- 0
-    if(length(DonneesCarte[["Primes"]][[i]]) > 1)
-        DonneesCarte_couleurs[["Primes"]][[i]] <- interpCol(DonneesCarte[["Primes"]][[i]], couleur_min, couleur_max)
-    else
-        DonneesCarte_couleurs[["Primes"]][[i]] <- couleur_median
-    DonneesCarte_couleurs[["Primes"]][[i]][DonneesCarte[["Primes"]][[i]] == 0] <- couleur_zero
+    gui.show(rpgm.step('main', 'leaflet'), 'progressbar_donnees')
+    gui.setProperties("this", "progressbar_donnees", list(value = 0, progressdescription = "0%"))
+    donnees <<- data.table::fread(path, sep =";", na.strings=c("",NA,"NULL"), select=c("lat", "lng", "prime_ttc", "var_1", "var_2", "var_3"), encoding = 'UTF-8')
+    IS_NULL <- is.na(donnees$lat) | is.na(donnees$lng)
+
+    donnees_null <- donnees[IS_NULL, ]
+    donnees <<- donnees[!IS_NULL, ]
+
+    data.table::setDF(donnees)
+    data.table::setDF(donnees_null)
+
+    donnees_points <- donnees[c("lat", "lng")]
+    donnees_points_sf <<- sf::st_as_sf(donnees_points, coords = c('lng', 'lat'), crs = sf::st_crs(shape[[1]]))
+
+    DonneesCarte[["Primes"]] <<- DonneesCarte_couleurs[["Primes"]] <<- list()
+    for(i in 1:length(shape))
+    {
+        Z <- as.data.frame(sf::st_within(donnees_points_sf, shape[[i]])) #dans le polygone ou non, tester si plus performant
+        DonneesCarte[["Primes"]][[i]] <<- as.vector(tapply(donnees$prime_ttc[Z$row.id], factor(Z$col.id, levels = 1:length(shape[[i]]$geometry)), sum))
+        DonneesCarte[["Primes"]][[i]][is.na(DonneesCarte[["Primes"]][[i]])] <<- 0
+        if(length(DonneesCarte[["Primes"]][[i]]) > 1)
+            DonneesCarte_couleurs[["Primes"]][[i]] <<- interpCol(DonneesCarte[["Primes"]][[i]], couleur_min, couleur_max)
+        else
+            DonneesCarte_couleurs[["Primes"]][[i]] <<- couleur_median
+        DonneesCarte_couleurs[["Primes"]][[i]][DonneesCarte[["Primes"]][[i]] == 0] <<- couleur_zero
+        k <- round(100*i/(n_shape))
+        gui.setProperties("this", "progressbar_donnees", list(value = k, progressdescription = `if`(k < 25, paste0(k, "%"), paste0("Import... ", k, "%"))))
+    }
 }
-script.setProgress(TRUE, 100L, "Entering GUI...")
 
 loadDonneesVents <- function(path)
 {
     gui.show(rpgm.step('main', 'leaflet'), 'progressbar_donnees')
-    gui.setProperties("this", "progressbar_donnees", list(value = 100, progressdescription = "0%"))
+    gui.setProperties("this", "progressbar_donnees", list(value = 0, progressdescription = "0%"))
     vents <- data.table::fread(path, sep =";", na.strings=c("",NA,"NULL"), select=c("Coordonnees", "Rafale sur les 10 dernieres minutes"))
     colnames(vents) <- c("coord", "rafales")
     vents <- vents[!is.na(vents$coord) & !is.na(vents$rafales)]
@@ -121,12 +125,18 @@ loadDonneesVents <- function(path)
 
 loadDonnees <- function(nom, path)
 {
+    if(nom == "exposition")
+        if(is.null(DonneesCarte[["Primes"]]))
+            loadDonneesPrimes(path)
+        else
+            gui.setProperty("this", "loadRepeater", "intervalcode" ,"")
     if(nom == "ciaran")
         if(is.null(DonneesCarte[["Vents"]]))
             loadDonneesVents(path)
 }
 
 empreinte <- "exposition"
+mapReady <- FALSE 
 gui.hide(rpgm.step('main', 'leaflet'), 'var_1')
 gui.hide(rpgm.step('main', 'leaflet'), 'var_2')
 gui.hide(rpgm.step('main', 'leaflet'), 'var_3')

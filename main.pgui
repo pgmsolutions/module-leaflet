@@ -265,7 +265,7 @@
 							"type": "progress",
 							"data": {
 								"subtype": "progressbar",
-								"value": "",
+								"value": "0",
 								"isr": false,
 								"css": "",
 								"margintop": "10",
@@ -313,6 +313,14 @@
 					]
 				}
 			]
+		},
+		{
+			"id": "loadRepeater",
+			"type": "interval",
+			"data": {
+				"intervalcode": "loadDonnees(\"exposition\", \"donnees/aportfolios.csv\"); mapReady <- TRUE; rpgm.sendToJavascript('updateMap', list()); gui.hide(\"this\", 'progressbar_donnees')",
+				"intervaltime": "1000"
+			}
 		}
 	],
 	"submitbutton": false,

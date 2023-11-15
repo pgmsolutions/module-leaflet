@@ -99,7 +99,7 @@ window.MapManager = new class {
         this._map.on('moveend', this.onMapViewChange);
 
         // First change
-        this.onMapViewChange();
+        //this.onMapViewChange();
 
         // Use for debugging (to delete)
         this._map.on('click', (e)=>{

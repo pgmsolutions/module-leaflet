@@ -76,39 +76,42 @@ plotly_graph <- function(data)
 
 onRPGMJavascript <- function(message, data){
     if(message == 'mapState'){
-        total <- 0
-        z <- getLvlPolygonToDisplay(data$view$zoomLevel)
-        color <- getColorLvlPolygon(z)
-        for(i in 1:length(shape[[z]]$geometry))
+        if(mapReady)
         {
-            P <- list()
-            l <- 1
-            for(j in 1:length(shape[[z]]$geometry[[i]]))
+            total <- 0
+            z <- getLvlPolygonToDisplay(data$view$zoomLevel)
+            color <- getColorLvlPolygon(z)
+            for(i in 1:length(shape[[z]]$geometry))
             {
-                for(k in 1:length(shape[[z]]$geometry[[i]][[j]]))
+                P <- list()
+                l <- 1
+                for(j in 1:length(shape[[z]]$geometry[[i]]))
                 {
-                    Z <- shape[[z]]$geometry[[i]][[j]][[k]]
-                    if(nrow(Z) > 1 && doDisplayPolygon(Z, data$view))
+                    for(k in 1:length(shape[[z]]$geometry[[i]][[j]]))
                     {
-                        P[[l]] <- formatPolygonForLeaflet(Z)
-                        l <- l+1
+                        Z <- shape[[z]]$geometry[[i]][[j]][[k]]
+                        if(nrow(Z) > 1 && doDisplayPolygon(Z, data$view))
+                        {
+                            P[[l]] <- formatPolygonForLeaflet(Z)
+                            l <- l+1
+                        }
                     }
                 }
+                if(l > 1)
+                {
+                    if(empreinte == "exposition")
+                        rpgm.sendToJavascript('addGeoJSON', list(points=P, id=i, tooltip=leafletTooltipDonnees(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], DonneesCarte[["Primes"]][[z]][i], "Primes", "€"), color=DonneesCarte_couleurs[["Primes"]][[z]][i]))
+                    else if(empreinte == "ciaran")
+                        rpgm.sendToJavascript('addGeoJSON', list(points=P, id=i, tooltip=leafletTooltipDonnees(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], DonneesCarte[["Vents"]][[z]][i], "Vents", "km/h"), color=DonneesCarte_couleurs[["Vents"]][[z]][i]))
+                    total <- total+1
+                }
             }
-            if(l > 1)
-            {
-                if(empreinte == "exposition")
-                    rpgm.sendToJavascript('addGeoJSON', list(points=P, id=i, tooltip=leafletTooltipDonnees(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], DonneesCarte[["Primes"]][[z]][i], "Primes", "€"), color=DonneesCarte_couleurs[["Primes"]][[z]][i]))
-                else if(empreinte == "ciaran")
-                    rpgm.sendToJavascript('addGeoJSON', list(points=P, id=i, tooltip=leafletTooltipDonnees(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], DonneesCarte[["Vents"]][[z]][i], "Vents", "km/h"), color=DonneesCarte_couleurs[["Vents"]][[z]][i]))
-                total <- total+1
-            }
+            
+            # Erase previous drawings and draw all polygons addded in queue
+            gui.setValue('this', 'totalPolygons', paste0('Total multi-polygons drawed: ', total, '<br>North lat: ', round(data$view$northLat, 3), ', East lng: ', round(data$view$eastLng, 3), ', South lat: ', round(data$view$southLat, 3), ', West lng: ', round(data$view$westLng, 3), ', Zoom lvl: ', data$view$zoomLevel));
+            rpgm.sendToJavascript('drawGeoJSON', list());
+            rpgm.sendToJavascript('updateLegend', list(content="Légende"));
         }
-        
-        # Erase previous drawings and draw all polygons addded in queue
-        gui.setValue('this', 'totalPolygons', paste0('Total multi-polygons drawed: ', total, '<br>North lat: ', round(data$view$northLat, 3), ', East lng: ', round(data$view$eastLng, 3), ', South lat: ', round(data$view$southLat, 3), ', West lng: ', round(data$view$westLng, 3), ', Zoom lvl: ', data$view$zoomLevel));
-        rpgm.sendToJavascript('drawGeoJSON', list());
-        rpgm.sendToJavascript('updateLegend', list(content="Légende"));
     }
     else if(message == 'mapClick'){
         print(paste0('User clicked on lat: ',data$coordinates$lat, 'and lng: ', data$coordinates$lng));
