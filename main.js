@@ -43,7 +43,6 @@ window.MapManager = new class {
                 this.drawGeoJSON();
             }
             else if(message === 'updateLegend'){
-                console.log(data.content);
                 this.updateLegend(data.content);
             }
             else if(message === 'updateMap'){
@@ -56,7 +55,9 @@ window.MapManager = new class {
                 this._map.setView([48.866667, 2.333333], 5);
             }
             else if(message === 'map.setIconUrl'){
-                this._markerUrl = data.url;
+                if(!window.location.href.includes('http')){
+                    this._markerUrl = data.url;
+                }
             }
         });
         this.initializeMap(); // Try to initialize now for RPGM Server
@@ -86,6 +87,10 @@ window.MapManager = new class {
         }).addTo(this._map);
 
         // Icon
+        if(window.location.href.includes('http')){
+            const parts = window.location.href.split('/').pop();
+            this._markerUrl = '/assets-instances/programs/'+parts+'/leaflet/icon.png';
+        }
         this._markerIcon = L.icon({
             iconUrl:      this._markerUrl,
             iconSize:     [48, 48],

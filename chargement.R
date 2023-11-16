@@ -1,4 +1,9 @@
-rpgm.sendToJavascript('map.setIconUrl', list(url=rpgm.pgmFilePath('leaflet/icon.png')));
+if(rpgm.isServer()){
+    file.copy(rpgm.pgmFilePath('leaflet/icon.png'), rpgm.outputFile("icon.png"));
+    rpgm.sendToJavascript('map.setIconUrl', list(url=rpgm.outputFileURL('icon.png')));
+} else {
+    rpgm.sendToJavascript('map.setIconUrl', list(url=rpgm.pgmFilePath('leaflet/icon.png')));
+}
 
 shape <- list()
 n_shape <- 6L
