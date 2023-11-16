@@ -81,6 +81,16 @@ onRPGMJavascript <- function(message, data){
             total <- 0
             z <- getLvlPolygonToDisplay(data$view$zoomLevel)
             color <- getColorLvlPolygon(z)
+
+            data$view$lengthLat <- data$view$northLat - data$view$southLat
+            data$view$lengthLng <- data$view$eastLng - data$view$westLng
+            data$view$northLat <- data$view$northLat + data$view$lengthLat * 0.2
+            data$view$southLat <- data$view$southLat - data$view$lengthLat * 0.2
+            data$view$eastLng <- data$view$eastLng + data$view$lengthLng * 0.2
+            data$view$westLng <- data$view$westLng - data$view$lengthLng * 0.2
+
+            lastView <<- list(northLat = data$view$northLat, southLat = data$view$southLat, eastLng = data$view$eastLng, westLng = data$view$westLng)
+
             for(i in 1:length(shape[[z]]$geometry))
             {
                 P <- list()
