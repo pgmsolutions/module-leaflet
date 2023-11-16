@@ -12,6 +12,12 @@
 	"history": [
 		{
 			"date": "16/11/2023",
+			"version": "1.0.1",
+			"author": "Nicolas",
+			"changelog": "Amélioration des performances d'affichage"
+		},
+		{
+			"date": "16/11/2023",
 			"version": "1.0.0",
 			"author": "Nicolas",
 			"changelog": "Complètement fonctionnelle"
