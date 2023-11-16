@@ -137,7 +137,6 @@ onRPGMJavascript <- function(message, data){
                 donnees_loc <- vents[vents$lat < data$view$northLat & vents$lat > data$view$southLat & vents$lng < data$view$eastLng & vents$lng > data$view$westLng, ]
                 D <- lapply(seq_len(nrow(donnees_loc)), function(k) list(lat = donnees_loc$lat[k], lng = donnees_loc$lng[k], label = paste0("Vents : <strong>", donnees_loc$rafales[k], "km/h</strong>.")))
             }
-            rpgm.notification("info", nrow(donnees_loc))
             if(nrow(donnees_loc) <= 150L)
             {
                 rpgm.sendToJavascript('updateMarkers', list(markers = D))
