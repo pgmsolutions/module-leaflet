@@ -10,23 +10,26 @@ n_shape <- 6L
 script.setProgress(TRUE, 0L, "Importing shape files... 1/6")
 
 shape$country <- sf::st_read("sf/gadm41_FRA_0.shp")
-shape$country <- sf::st_simplify(shape$country, preserveTopology = TRUE, dTolerance = 30)
+shape$country <- sf::st_simplify(shape$country, preserveTopology = TRUE, dTolerance = 600)
 script.setProgress(TRUE, 17L, "Importing shape files... 2/6")
 
 shape$region <- sf::st_read("sf/gadm41_FRA_1.shp")
-shape$region <- sf::st_simplify(shape$region, preserveTopology = TRUE, dTolerance = 30)
+shape$region <- sf::st_simplify(shape$region, preserveTopology = TRUE, dTolerance = 150)
 script.setProgress(TRUE, 33L, "Importing shape files... 3/6")
 
 shape$departement <- sf::st_read("sf/gadm41_FRA_2.shp")
+shape$departement <- sf::st_simplify(shape$departement, preserveTopology = TRUE, dTolerance = 50)
 script.setProgress(TRUE, 50L, "Importing shape files... 4/6")
 
-shape[[4]] <- sf::st_read("sf/gadm41_FRA_3.shp")
+shape$canton <- sf::st_read("sf/gadm41_FRA_3.shp")
+shape$canton <- sf::st_simplify(shape$canton, preserveTopology = TRUE, dTolerance = 10)
 script.setProgress(TRUE, 67L, "Importing shape files... 5/6")
 
-shape[[5]] <- sf::st_read("sf/gadm41_FRA_4.shp")
+shape$insee <- sf::st_read("sf/gadm41_FRA_4.shp")
+shape$insee <- sf::st_simplify(shape$insee, preserveTopology = TRUE, dTolerance = 2)
 script.setProgress(TRUE, 83L, "Importing shape files... 6/6")
 
-shape[[6]] <- sf::st_read("sf/gadm41_FRA_5.shp")
+shape$commune <- sf::st_read("sf/gadm41_FRA_5.shp")
 script.setProgress(TRUE, 100L, "Importing shape files... 6/6")
 
 getLvlPolygonToDisplay <- function(zoomLevel)
