@@ -4,7 +4,7 @@
 			"id": "",
 			"type": "label",
 			"data": {
-				"value": "Leaflet JS/R example",
+				"value": "Cartographie de l'Exposition et Emprunte Cat Nat",
 				"isr": false,
 				"css": "",
 				"margintop": "10",
@@ -13,6 +13,23 @@
 				"helptext": "",
 				"helpposition": "bottom",
 				"fontsize": "24",
+				"fontfamily": "default",
+				"fontcolor": "#ffffff"
+			}
+		},
+		{
+			"id": "",
+			"type": "label",
+			"data": {
+				"value": "Une carte Leaflet pilotée par R via RPGM",
+				"isr": false,
+				"css": "",
+				"margintop": "",
+				"labeltext": "",
+				"labelposition": "hidden",
+				"helptext": "",
+				"helpposition": "bottom",
+				"fontsize": "14",
 				"fontfamily": "default",
 				"fontcolor": "#ffffff"
 			}
@@ -319,7 +336,7 @@
 			"type": "interval",
 			"data": {
 				"intervalcode": "loadDonnees(\"exposition\", \"donnees/aportfolios.csv\"); mapReady <- TRUE; rpgm.sendToJavascript('updateMap', list()); gui.hide(\"this\", 'progressbar_donnees')",
-				"intervaltime": "1000"
+				"intervaltime": "200"
 			}
 		}
 	],
