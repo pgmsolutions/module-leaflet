@@ -117,6 +117,11 @@ onRPGMJavascript <- function(message, data){
                 list(color='#FC4E2A', label='20 - 40'),
                 list(color='#800026', label='10 - 20')
             ))));
+
+            # Markers
+            rpgm.sendToJavascript('updateMarkers', list(markers=list(
+                list(lat=47.210066, lng=6.003113, label="Chez moi")
+            )));
         }
     }
     else if(message == 'mapClick'){

@@ -10,13 +10,13 @@ window.MapManager = new class {
         /** Leaflet map pointer */
         this._map = null;
         this._mapInfo = null;
+        this._markerIcon = null;
+        this._markerUrl = null;
 
         /** All draw stuff */
-        this._queuedDrawings = [];
-        this._mapDrawing = [];
-
         this._queueGeoJSON = [];
         this._lastGeoJSON = null;
+        this._markers = [];
 
         /** Timer to not send too much changes to RPGM */
         this._debouncer = null;
@@ -49,8 +49,14 @@ window.MapManager = new class {
             else if(message === 'updateMap'){
                 this.sendChange();
             }
+            else if(message === 'updateMarkers'){
+                this.updateMarkers(data.markers);
+            }
             else if(message === 'resetView'){
                 this._map.setView([48.866667, 2.333333], 5);
+            }
+            else if(message === 'map.setIconUrl'){
+                this._markerUrl = data.url;
             }
         });
         this.initializeMap(); // Try to initialize now for RPGM Server
@@ -78,6 +84,14 @@ window.MapManager = new class {
             maxZoom: 19,
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         }).addTo(this._map);
+
+        // Icon
+        this._markerIcon = L.icon({
+            iconUrl:      this._markerUrl,
+            iconSize:     [48, 48],
+            iconAnchor:   [24, 48],
+            popupAnchor:  [0, -48]
+        });
 
         // Info popup
         this._mapInfo = L.control();
@@ -227,6 +241,20 @@ window.MapManager = new class {
     }
     updateLegend(content){
         this._legendDiv.innerHTML = content;
+    }
+
+    updateMarkers(markers){
+        this._markers.map(m => m.remove());
+        this._markers = [];
+        markers.forEach(m => {
+            const newMarker = L.marker([m.lat, m.lng], {icon: this._markerIcon});
+            newMarker.bindPopup(m.label);
+            newMarker.on('mouseover',function(ev){
+                newMarker.openPopup();
+            });
+            newMarker.addTo(this._map);
+            this._markers.push(newMarker);
+        });
     }
 }
 MapManager.initialize();

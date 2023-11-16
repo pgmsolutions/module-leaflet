@@ -1,3 +1,5 @@
+rpgm.sendToJavascript('map.setIconUrl', list(url=rpgm.pgmFilePath('leaflet/icon.png')));
+
 shape <- list()
 n_shape <- 6L
 script.setProgress(TRUE, 0L, "Importing shape files... 1/6")
