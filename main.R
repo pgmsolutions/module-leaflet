@@ -110,7 +110,13 @@ onRPGMJavascript <- function(message, data){
             # Erase previous drawings and draw all polygons addded in queue
             gui.setValue('this', 'totalPolygons', paste0('Total multi-polygons drawed: ', total, '<br>North lat: ', round(data$view$northLat, 3), ', East lng: ', round(data$view$eastLng, 3), ', South lat: ', round(data$view$southLat, 3), ', West lng: ', round(data$view$westLng, 3), ', Zoom lvl: ', data$view$zoomLevel));
             rpgm.sendToJavascript('drawGeoJSON', list());
-            rpgm.sendToJavascript('updateLegend', list(content="Légende"));
+            rpgm.sendToJavascript('updateLegend', list(content=getLegend(list(
+                list(color='#FED976', label='100000 +'),
+                list(color='#FEB24C', label='Elephant - Carotte'),
+                list(color='#FD8D3C', label='50 - 1337'),
+                list(color='#FC4E2A', label='20 - 40'),
+                list(color='#800026', label='10 - 20')
+            ))));
         }
     }
     else if(message == 'mapClick'){
@@ -119,4 +125,12 @@ onRPGMJavascript <- function(message, data){
     else if(message == 'zoneClick'){
         plotly_graph(data)
    }
+}
+
+getLegend <- function(info){
+    result <- '';
+    for(i in info){
+        result <- paste0(result, '<i style="background:', i$color, '"></i> ', i$label, '<br>');
+    }
+    return(result);
 }

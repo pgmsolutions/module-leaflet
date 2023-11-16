@@ -43,6 +43,7 @@ window.MapManager = new class {
                 this.drawGeoJSON();
             }
             else if(message === 'updateLegend'){
+                console.log(data.content);
                 this.updateLegend(data.content);
             }
             else if(message === 'updateMap'){
@@ -93,7 +94,7 @@ window.MapManager = new class {
         // Legend
         this._legend = L.control({position: 'bottomright'});
         this._legend.onAdd = (map)=>{
-            this._legendDiv = L.DomUtil.create('div', 'info legend');
+            this._legendDiv = L.DomUtil.create('div', 'info map-legend');
             this._legendDiv.innerHTML = 'Légende';
             return this._legendDiv;
         };
@@ -142,38 +143,6 @@ window.MapManager = new class {
             }
         });
     }
-
-    // ---------------------------------------------------------
-    // 1. SIMPLE POLYGON SYSTEM
-    // ---------------------------------------------------------
-    /*
-    addPolygon(points, color){
-        const draw = L.polygon(points, {color});
-        draw.addTo(this._map);
-        this._mapDrawing.push(draw);
-    }
-    removeAllDrawings(){
-        this._mapDrawing.forEach(d => d.remove());
-    }
-    */
-
-    // ---------------------------------------------------------
-    // 2. QUEUE SYSTEM
-    // ---------------------------------------------------------
-    /*
-    clearQueue(){
-        this._queuedDrawings = [];
-    }
-    addToQueue(points, color){
-        this._queuedDrawings.push(L.polygon(points, {color}));
-    }
-    drawQueue(){
-        this.removeAllDrawings();
-        this._mapDrawing = this._queuedDrawings;
-        this.clearQueue();
-        this._mapDrawing.forEach(d => d.addTo(this._map));
-    }
-    */
 
     // ---------------------------------------------------------
     // 3. GEOJSON SYSTEM
