@@ -127,9 +127,14 @@ onRPGMJavascript <- function(message, data){
             ))));
 
             # Markers
-            rpgm.sendToJavascript('updateMarkers', list(markers=list(
-                list(lat=47.210066, lng=6.003113, label="Chez moi")
-            )));
+            if(data$view$zoomLevel >= 12)
+            {
+                donnees_loc <- donnees[donnees$lat < data$view$northLat & donnees$lat > data$view$southLat & donnees$lng < data$view$eastLng & donnees$lng > data$view$westLng, ]
+                D <- lapply(seq_len(nrow(donnees_loc)), function(k) list(lat = donnees_loc$lat[k], lng = donnees_loc$lng[k], label = paste0("Prime : <strong>", donnees_loc$prime_ttc[k], "€</strong>.")))
+                rpgm.sendToJavascript('updateMarkers', list(markers = D))
+            }
+            else
+                rpgm.sendToJavascript('updateMarkers', list(markers = list()))
         }
     }
     else if(message == 'mapClick'){
