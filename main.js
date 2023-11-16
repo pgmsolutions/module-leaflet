@@ -1,3 +1,7 @@
+function wait(ms){
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 /**
  * This class manages the leaflet map.
  */
@@ -54,7 +58,7 @@ window.MapManager = new class {
     /**
      * Initialize the map
      */
-    initializeMap(){
+    async initializeMap(){
         // Stop if the user is not in the correct GUI
         if(RPGM.getCurrentStepId() !== 'leaflet'){
             return;
@@ -66,6 +70,7 @@ window.MapManager = new class {
         }
 
         // Initialize map
+        await wait(10);
         this._map = L.map('map');
         this._map.setView([48.866667, 2.333333], 5);
         const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
