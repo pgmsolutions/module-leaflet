@@ -97,14 +97,21 @@ loadDonneesVents <- function(path)
 {
     gui.show(rpgm.step('main', 'leaflet'), 'progressbar_donnees')
     gui.setProperties("this", "progressbar_donnees", list(value = 0, progressdescription = "0%"))
-    vents <- data.table::fread(path, sep =";", na.strings=c("",NA,"NULL"), select=c("Coordonnees", "Rafale sur les 10 dernieres minutes"))
-    colnames(vents) <- c("coord", "rafales")
-    vents <- vents[!is.na(vents$coord) & !is.na(vents$rafales)]
-    vents[, c("lat", "lng")] <- data.table::tstrsplit(vents$coord, ", ")
-    vents$coord <- NULL
-    vents$rafales <- vents$rafales*3.6
+    vents <<- data.table::fread(path, sep =";", na.strings=c("",NA,"NULL"), select=c("Coordonnees", "Rafale sur les 10 dernieres minutes"))
+    colnames(vents) <<- c("coord", "rafales")
+    vents <<- vents[!is.na(vents$coord) & !is.na(vents$rafales)]
+    ###TEST
+    max_rafales <- tapply(vents$rafales, vents$coord, max)
+    vents <<- data.frame(coord = names(max_rafales), rafales = as.vector(max_rafales))
+    colnames(vents) <<- c("coord", "rafales")
+    ###TEST
+    vents[, c("lat", "lng")] <<- data.table::tstrsplit(vents$coord, ", ")
+    vents$lat <<- as.numeric(vents$lat)
+    vents$lng <<- as.numeric(vents$lng)
+    vents$coord <<- NULL
+    vents$rafales <<- vents$rafales*3.6
 
-    data.table::setDF(vents)
+    #data.table::setDF(vents)
 
     vents_points <- vents[c("lat", "lng")]
     vents_points_sf <- sf::st_as_sf(vents_points, coords = c('lng', 'lat'), crs = sf::st_crs(shape[[1]]))
