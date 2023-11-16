@@ -139,6 +139,7 @@ loadDonnees <- function(nom, path)
 
 empreinte <- "exposition"
 mapReady <- FALSE 
+lastView <- NULL
 gui.hide(rpgm.step('main', 'leaflet'), 'var_1')
 gui.hide(rpgm.step('main', 'leaflet'), 'var_2')
 gui.hide(rpgm.step('main', 'leaflet'), 'var_3')

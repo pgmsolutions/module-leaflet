@@ -76,20 +76,18 @@ plotly_graph <- function(data)
 
 onRPGMJavascript <- function(message, data){
     if(message == 'mapState'){
-        if(mapReady)
+        if(mapReady && (is.null(lastView) || lastView$zoomLevel != data$view$zoomLevel || (data$view$northLat > lastView$northLat || data$view$southLat < lastView$southLat || data$view$eastLng > lastView$eastLng || data$view$westLng < lastView$westLng)))
         {
+            rpgm.notification("info", "coucou")
             total <- 0
             z <- getLvlPolygonToDisplay(data$view$zoomLevel)
             color <- getColorLvlPolygon(z)
 
-            data$view$lengthLat <- data$view$northLat - data$view$southLat
-            data$view$lengthLng <- data$view$eastLng - data$view$westLng
-            data$view$northLat <- data$view$northLat + data$view$lengthLat * 0.2
-            data$view$southLat <- data$view$southLat - data$view$lengthLat * 0.2
-            data$view$eastLng <- data$view$eastLng + data$view$lengthLng * 0.2
-            data$view$westLng <- data$view$westLng - data$view$lengthLng * 0.2
+            lengthLat <- data$view$northLat - data$view$southLat
+            lengthLng <- data$view$eastLng - data$view$westLng
+            data$view[c('northLat', 'southLat', 'eastLng', 'westLng')] <- as.list(c(data$view$northLat, data$view$southLat, data$view$eastLng, data$view$westLng) + 0.4*c(lengthLat, - lengthLat, lengthLng, - lengthLng))
 
-            lastView <<- list(northLat = data$view$northLat, southLat = data$view$southLat, eastLng = data$view$eastLng, westLng = data$view$westLng)
+            lastView <<- data$view[c('northLat', 'southLat', 'eastLng', 'westLng', 'zoomLevel')]
 
             for(i in 1:length(shape[[z]]$geometry))
             {
