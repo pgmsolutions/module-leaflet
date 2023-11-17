@@ -11,6 +11,12 @@
 	"outputfolder": "{{name}}_{{datetime}}",
 	"history": [
 		{
+			"date": "17/11/2023",
+			"version": "1.0.2",
+			"author": "Nicolas",
+			"changelog": "Optimisation de la vitesse de chargement"
+		},
+		{
 			"date": "16/11/2023",
 			"version": "1.0.1",
 			"author": "Nicolas",
