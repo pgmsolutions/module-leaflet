@@ -34,14 +34,14 @@ shape$canton <- sf::st_read("sf-simple/FRA-3.shp")
 script.setProgress(TRUE, 67L, "Importing shape files... 5/6")
 
 #shape$insee <- sf::st_read("sf/gadm41_FRA_4.shp")
-#shape$insee <- sf::st_simplify(shape$insee, preserveTopology = TRUE, dTolerance = 5)
+#shape$insee <- sf::st_simplify(shape$insee, preserveTopology = TRUE, dTolerance = 10)
 #sf::st_write(shape$insee, "sf-simple/FRA-4.shp", crs = sf::st_crs(shape$insee), layer_options = "ENCODING=UTF-8")
 shape$insee <- sf::st_read("sf-simple/FRA-4.shp")
 script.setProgress(TRUE, 83L, "Importing shape files... 6/6")
 
 #shape$commune <- sf::st_read("sf/gadm41_FRA_5.shp")
-#shape$commune <- sf::st_simplify(shape$commune, preserveTopology = TRUE, dTolerance = 2)
-#sf::st_write(shape$insee, "sf-simple/FRA-5.shp", crs = sf::st_crs(shape$insee), layer_options = "ENCODING=UTF-8")
+#shape$commune <- sf::st_simplify(shape$commune, preserveTopology = TRUE, dTolerance = 4)
+#sf::st_write(shape$commune, "sf-simple/FRA-5.shp", crs = sf::st_crs(shape$commune), layer_options = "ENCODING=UTF-8")
 shape$commune <- sf::st_read("sf-simple/FRA-5.shp")
 script.setProgress(TRUE, 100L, "Importing shape files... 6/6")
 
