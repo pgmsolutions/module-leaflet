@@ -81,6 +81,7 @@ window.MapManager = new class {
         await wait(10);
         this._map = L.map('map');
         this._map.setView([48., 2.], 5);
+//      Lien pour les fonds de carte libres : https://leaflet-extras.github.io/leaflet-providers/preview/
 //        const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         const tiles = L.tileLayer('http://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
             maxZoom: 19,
