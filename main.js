@@ -52,7 +52,7 @@ window.MapManager = new class {
                 this.updateMarkers(data.markers);
             }
             else if(message === 'resetView'){
-                this._map.setView([48.866667, 2.333333], 5);
+                this._map.setView([48., 2.], 5);
             }
             else if(message === 'map.setIconUrl'){
                 if(!window.location.href.includes('http')){
@@ -80,7 +80,7 @@ window.MapManager = new class {
         // Initialize map
         await wait(10);
         this._map = L.map('map');
-        this._map.setView([48.866667, 2.333333], 5);
+        this._map.setView([48., 2.], 5);
         const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
