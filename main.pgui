@@ -261,7 +261,7 @@
 								"helptext": "",
 								"helpposition": "bottom",
 								"required": false,
-								"onchange": "loadDonnees(empreinte, path[[empreinte]]);",
+								"onchange": "loadDonnees(empreinte, path[[empreinte]]); rpgm.sendToJavascript('updateMap', list())",
 								"condition": "",
 								"choices": [
 									{
