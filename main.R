@@ -77,7 +77,7 @@ plotly_graph <- function(data)
 onRPGMJavascript <- function(message, data){
     if(message == 'mapState'){
         z <<- getLvlPolygonToDisplay(data$view$zoomLevel)
-        if(mapReady >= z && (is.null(lastView) || lastView$empreinte != empreinte || lastView$zoomLevel != data$view$zoomLevel || (data$view$northLat > lastView$northLat || data$view$southLat < lastView$southLat || data$view$eastLng > lastView$eastLng || data$view$westLng < lastView$westLng)))
+        if(mapReady[[empreinte]] >= z && (is.null(lastView) || lastView$empreinte != empreinte || lastView$zoomLevel != data$view$zoomLevel || (data$view$northLat > lastView$northLat || data$view$southLat < lastView$southLat || data$view$eastLng > lastView$eastLng || data$view$westLng < lastView$westLng)))
         {
             total <- 0
 
@@ -161,7 +161,7 @@ onRPGMJavascript <- function(message, data){
    }
    else if(message == 'loadDonneesContinue'){
         print(data)
-        loadDonnees(data$empreinte, "donnees/aportfolios.csv", data$lastShapeContinue)
+        loadDonnees(data$empreinte, path[[data$empreinte]], data$lastShapeContinue)
    }
 }
 

@@ -261,7 +261,7 @@
 								"helptext": "",
 								"helpposition": "bottom",
 								"required": false,
-								"onchange": "loadDonnees(empreinte, \"donnees/synop.csv\"); rpgm.sendToJavascript('updateMap', list()); gui.hide(\"this\", 'progressbar_donnees')",
+								"onchange": "loadDonnees(empreinte, path[[empreinte]]);",
 								"condition": "",
 								"choices": [
 									{
@@ -335,7 +335,7 @@
 			"id": "loadRepeater",
 			"type": "interval",
 			"data": {
-				"intervalcode": "loadDonnees(\"exposition\", \"donnees/aportfolios.csv\");",
+				"intervalcode": "loadDonnees(empreinte, path[[empreinte]]);",
 				"intervaltime": "200"
 			}
 		}
