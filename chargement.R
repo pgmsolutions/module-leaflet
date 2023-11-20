@@ -144,11 +144,12 @@ loadDonneesVents <- function(path, continue = 1L)
 
         vents_points <- vents[c("lat", "lng")]
         vents_points_sf <<- sf::st_as_sf(vents_points, coords = c('lng', 'lat'), crs = sf::st_crs(shape[[1]]))
+
+        DonneesCarte[["Vents"]] <<- DonneesCarte_couleurs[["Vents"]] <<- list()
     }
-    DonneesCarte[["Vents"]] <<- DonneesCarte_couleurs[["Vents"]] <<- list()
 
     if(continue <= 6L)
-        for(i in 1:length(shape))
+        for(i in continue:length(shape))
         {
             Z <- as.data.frame(sf::st_within(vents_points_sf, shape[[i]])) #dans le polygone ou non, tester si plus performant
             DonneesCarte[["Vents"]][[i]] <<- as.vector(tapply(vents$rafales[Z$row.id], factor(Z$col.id, levels = 1:length(shape[[i]]$geometry)), max))
@@ -170,7 +171,7 @@ loadDonneesVents <- function(path, continue = 1L)
                 DonneesCarte_couleurs[["Vents"]][[i]] <<- "#1c2e30"
                 DonneesCarte_legende[["Vents"]][[i]] <<- list(couleurs = "#1c2e30", labels = format(round(DonneesCarte[["Vents"]][[i]][1]), big.mark = " "))
             }
-            DonneesCarte_couleurs[["Vents"]][[i]][DonneesCarte[["Vents"]][[i]] == 0] <<- couleur_zero
+            #DonneesCarte_couleurs[["Vents"]][[i]][DonneesCarte[["Vents"]][[i]] == 0] <<- couleur_zero
             k <- round(100*i/(n_shape))
             gui.setProperties("this", "progressbar_donnees", list(value = k, progressdescription = `if`(k < 25, paste0(k, "%"), paste0("Import... ", k, "%"))))
             if(z <= i)
@@ -197,7 +198,6 @@ loadDonnees <- function(nom, path, continue = 1L)
     if(nom == "ciaran")
         if(is.null(DonneesCarte[["Vents"]]) || mapReady$ciaran < 6L)
         {
-            gui.setProperty("this", "loadRepeater", "intervalcode" ,"")
             loadDonneesVents(path, continue)
         }
         else

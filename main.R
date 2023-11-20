@@ -154,13 +154,12 @@ onRPGMJavascript <- function(message, data){
         }
     }
     else if(message == 'mapClick'){
-        print(paste0('User clicked on lat: ',data$coordinates$lat, 'and lng: ', data$coordinates$lng));
+        #print(paste0('User clicked on lat: ',data$coordinates$lat, 'and lng: ', data$coordinates$lng));
     }
     else if(message == 'zoneClick'){
         plotly_graph(data)
    }
    else if(message == 'loadDonneesContinue'){
-        print(data)
         loadDonnees(data$empreinte, path[[data$empreinte]], data$lastShapeContinue)
    }
 }
