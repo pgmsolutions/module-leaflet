@@ -119,6 +119,7 @@ loadDonneesPrimes <- function(path, continue = 1L)
             }
         }
     mapReady <<- 6L
+    gui.hide("this", 'progressbar_donnees')
 }
 
 loadDonneesVents <- function(path)

@@ -335,7 +335,7 @@
 			"id": "loadRepeater",
 			"type": "interval",
 			"data": {
-				"intervalcode": "loadDonnees(\"exposition\", \"donnees/aportfolios.csv\"); rpgm.sendToJavascript('updateMap', list()); gui.hide(\"this\", 'progressbar_donnees')",
+				"intervalcode": "loadDonnees(\"exposition\", \"donnees/aportfolios.csv\");",
 				"intervaltime": "200"
 			}
 		}
