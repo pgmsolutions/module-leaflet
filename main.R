@@ -115,7 +115,6 @@ onRPGMJavascript <- function(message, data){
             }
             
             # Erase previous drawings and draw all polygons addded in queue
-            gui.setValue('this', 'totalPolygons', paste0('Total multi-polygons drawed: ', total, '<br>North lat: ', round(data$view$northLat, 3), ', East lng: ', round(data$view$eastLng, 3), ', South lat: ', round(data$view$southLat, 3), ', West lng: ', round(data$view$westLng, 3), ', Zoom lvl: ', data$view$zoomLevel));
             rpgm.sendToJavascript('drawGeoJSON', list());
             if(empreinte == "exposition")
                 rpgm.sendToJavascript('updateLegend', list(content=
