@@ -162,9 +162,9 @@ loadDonneesVents <- function(path, continue = 1L)
 
             if(length(DonneesCarte[["Vents"]][[i]]) > 1)
             {
-                DonneesCarte_couleurs[["Vents"]][[i]] <<- interpCol2(DonneesCarte[["Vents"]][[i]], c("#3498db", "#2980b9", "#1c2e30"), c(0, 0.5, 1))
-                plage_legende <- min(DonneesCarte[["Vents"]][[i]]) + c(1, 0.65, 0.35, 0.05)*(max(DonneesCarte[["Vents"]][[i]]) - min(DonneesCarte[["Vents"]][[i]]))
-                DonneesCarte_legende[["Vents"]][[i]] <<- list(couleurs = c(interpCol2(plage_legende, c("#3498db", "#2980b9", "#1c2e30"), c(0, 0.5, 1))), labels = format(c(round(plage_legende)), big.mark = " "))
+                DonneesCarte_couleurs[["Vents"]][[i]] <<- interpCol2(DonneesCarte[["Vents"]][[i]], c("#acd0f1", "#3498db", "#2980b9", "#1c2e30"), c(0, 0.25, 0.5, 1))
+                plage_legende <- min(DonneesCarte[["Vents"]][[i]]) + c(1, 0.5, 0.25, 0)*(max(DonneesCarte[["Vents"]][[i]]) - min(DonneesCarte[["Vents"]][[i]]))
+                DonneesCarte_legende[["Vents"]][[i]] <<- list(couleurs = c(interpCol2(plage_legende, c("#acd0f1", "#3498db", "#2980b9", "#1c2e30"), c(0, 0.25, 0.5, 1))), labels = format(c(round(plage_legende)), big.mark = " "))
             }
             else
             {

@@ -23,20 +23,23 @@ leafletTooltipGeo <- function(pays, region, dpt, canton, insee, commune)
     ))
 
 
-leafletTooltipDonnees <- function(pays, region, dpt, canton, insee, commune, donnee, nom_donnee, unite_donnee)
-    return(paste0(
-        leafletTooltipGeo(pays, region, dpt, canton, insee, commune),
-        "<br><br>", nom_donnee, " : <strong>", format(round(donnee), big.mark = " "), unite_donnee, "</strong>."
-    ))
+leafletTooltipDonnees <- function(pays, region, dpt, canton, insee, commune, donnees)
+{
+    tooltip <- leafletTooltipGeo(pays, region, dpt, canton, insee, commune)
+    for(i in 1:length(donnees))
+        tooltip <- paste0(tooltip, `if`(i == 1, "<br>", ""), "<br>", names(donnees)[i], " : <strong>", format(round(donnees[[i]]$value), big.mark = " "), donnees[[i]]$unit, "</strong>.")
+    return(tooltip)
+}
 
-plotlyTitle <- function(pays, region, dpt, canton, insee, commune)
+plotlyTitle <- function(pays, region, dpt, canton, insee, commune, primes)
     return(paste0(
         "<b>", pays, "</b>",
         `if`(is.null(region), "", paste0(", <b>", region, "</b>")),
         `if`(is.null(dpt), "", paste0(", <b>", dpt, "</b>")),
         `if`(is.null(canton), "", paste0(", <b>", canton, "</b>")),
         `if`(is.null(insee), "", paste0(", <b>", insee, "</b>")),
-        `if`(is.null(commune), "", paste0(", <b>", commune, "</b>"))
+        `if`(is.null(commune), "", paste0(", <b>", commune, "</b>")),
+        `if`(is.null(primes), "", paste0("<br>Primes : <b>", format(round(primes), big.mark = " "), "€</b>"))
     ))
 
 plotly_graph <- function(data)
@@ -47,7 +50,7 @@ plotly_graph <- function(data)
 
         #layout commun
         layout = list(
-            title = plotlyTitle(selected_shape$COUNTRY, selected_shape$NAME_1, selected_shape$NAME_2, selected_shape$NAME_3, selected_shape$NAME_4, selected_shape$NAME_5),
+            title = plotlyTitle(selected_shape$COUNTRY, selected_shape$NAME_1, selected_shape$NAME_2, selected_shape$NAME_3, selected_shape$NAME_4, selected_shape$NAME_5, DonneesCarte[['Primes']][[z]][as.integer(data$id)]),
             height = 350,
             width = 450,
             font = list(
@@ -107,9 +110,9 @@ onRPGMJavascript <- function(message, data){
                 if(l > 1)
                 {
                     if(empreinte == "exposition")
-                        rpgm.sendToJavascript('addGeoJSON', list(points=P, id=i, tooltip=leafletTooltipDonnees(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], DonneesCarte[["Primes"]][[z]][i], "Primes", "€"), color=DonneesCarte_couleurs[["Primes"]][[z]][i]))
+                        rpgm.sendToJavascript('addGeoJSON', list(points=P, id=i, tooltip=leafletTooltipDonnees(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], list(Primes = list(value = DonneesCarte[["Primes"]][[z]][i], unit = "€"))), color=DonneesCarte_couleurs[["Primes"]][[z]][i]))
                     else if(empreinte == "ciaran")
-                        rpgm.sendToJavascript('addGeoJSON', list(points=P, id=i, tooltip=leafletTooltipDonnees(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], DonneesCarte[["Vents"]][[z]][i], "Vents", "km/h"), color=DonneesCarte_couleurs[["Vents"]][[z]][i]))
+                        rpgm.sendToJavascript('addGeoJSON', list(points=P, id=i, tooltip=leafletTooltipDonnees(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], list(Primes = list(value = DonneesCarte[["Primes"]][[z]][i], unit = "€"), Vents = list(value = DonneesCarte[["Vents"]][[z]][i], unit = "km/h"))), color=DonneesCarte_couleurs[["Vents"]][[z]][i]))
                     total <- total+1
                 }
             }
