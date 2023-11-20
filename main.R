@@ -76,11 +76,10 @@ plotly_graph <- function(data)
 
 onRPGMJavascript <- function(message, data){
     if(message == 'mapState'){
-        if(mapReady && (is.null(lastView) || lastView$empreinte != empreinte || lastView$zoomLevel != data$view$zoomLevel || (data$view$northLat > lastView$northLat || data$view$southLat < lastView$southLat || data$view$eastLng > lastView$eastLng || data$view$westLng < lastView$westLng)))
+        z <<- getLvlPolygonToDisplay(data$view$zoomLevel)
+        if(mapReady >= z && (is.null(lastView) || lastView$empreinte != empreinte || lastView$zoomLevel != data$view$zoomLevel || (data$view$northLat > lastView$northLat || data$view$southLat < lastView$southLat || data$view$eastLng > lastView$eastLng || data$view$westLng < lastView$westLng)))
         {
             total <- 0
-            z <- getLvlPolygonToDisplay(data$view$zoomLevel)
-            color <- getColorLvlPolygon(z)
 
             lengthLat <- data$view$northLat - data$view$southLat
             lengthLng <- data$view$eastLng - data$view$westLng
@@ -122,7 +121,7 @@ onRPGMJavascript <- function(message, data){
                 rpgm.sendToJavascript('updateLegend', list(content=
                     getLegend(lapply(seq_len(length(DonneesCarte_legende[["Primes"]][[z]]$couleurs)), function(k) list(color = DonneesCarte_legende[["Primes"]][[z]]$couleurs[k], label = DonneesCarte_legende[["Primes"]][[z]]$labels[k])), "€"
                 )))
-            else
+            else if(empreinte == "ciaran")
                 rpgm.sendToJavascript('updateLegend', list(content=
                     getLegend(lapply(seq_len(length(DonneesCarte_legende[["Vents"]][[z]]$couleurs)), function(k) list(color = DonneesCarte_legende[["Vents"]][[z]]$couleurs[k], label = DonneesCarte_legende[["Vents"]][[z]]$labels[k])), "km/h"
                 )))
@@ -160,12 +159,17 @@ onRPGMJavascript <- function(message, data){
     else if(message == 'zoneClick'){
         plotly_graph(data)
    }
+   else if(message == 'loadDonneesContinue'){
+        print(data)
+        loadDonnees(data$empreinte, "donnees/aportfolios.csv", data$lastShapeContinue)
+   }
 }
 
-getLegend <- function(info, unite){
+getLegend <- function(info, unite)
+{
     result <- paste0('Légende (', unite, ') <br>');
-    for(i in info){
-        result <- paste0(result, '<i style="background:', i$color, '"></i> ', i$label, '<br>');
-    }
+    for(i in info)
+        result <- paste0(result, '<i style="background:', i$color, '"></i> ', i$label, '<br>')
+
     return(result);
 }

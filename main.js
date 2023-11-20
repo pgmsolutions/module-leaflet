@@ -47,6 +47,13 @@ window.MapManager = new class {
             }
             else if(message === 'updateMap'){
                 this.sendChange();
+                if (typeof data.empreinte !== 'undefined')
+                {
+                    RPGM.sendToLanguage('r', 'loadDonneesContinue', {
+                        empreinte: data.empreinte,
+                        lastShapeContinue: data.lastShapeContinue
+                    });
+                }
             }
             else if(message === 'updateMarkers'){
                 this.updateMarkers(data.markers);

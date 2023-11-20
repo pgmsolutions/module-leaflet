@@ -47,34 +47,20 @@ script.setProgress(TRUE, 100L, "Importing shape files... 6/6")
 
 getLvlPolygonToDisplay <- function(zoomLevel)
 {
-    if(zoomLevel <=5)
-        return(1)
-    if(zoomLevel <=6)
-        return(2)
+    if(zoomLevel <=5L)
+        return(1L)
+    if(zoomLevel <=6L)
+        return(2L)
     if(zoomLevel <=7)
-        return(3)
-    if(zoomLevel <=8)
-        return(4)
-    if(zoomLevel <=9)
-        return(5)
-    return(6)
+        return(3L)
+    if(zoomLevel <=8L)
+        return(4L)
+    if(zoomLevel <=9L)
+        return(5L)
+    return(6L)
 }
 
-getColorLvlPolygon <- function(lvlPolygon)
-{
-    if(lvlPolygon == 1)
-        return(rgb(52, 73, 94, maxColorValue=255))
-    if(lvlPolygon == 2)
-        return(rgb(52, 152, 219, maxColorValue=255))
-    if(lvlPolygon == 3)
-        return(rgb(41, 128, 185, maxColorValue=255))
-    if(lvlPolygon == 4)
-        return(rgb(211, 84, 0, maxColorValue=255))
-    if(lvlPolygon == 5)
-        return(rgb(231, 76, 60, maxColorValue=255))
-    if(lvlPolygon == 6)
-        return(rgb(192, 57, 43, maxColorValue=255))
-}
+z <- getLvlPolygonToDisplay(5L)
 
 couleur_min <- '#f1c40f'
 couleur_max <- '#c0392b'
@@ -82,43 +68,57 @@ couleur_median <- '#e67e22'
 couleur_zero <- '#bdc3c7'
 
 DonneesCarte <- DonneesCarte_couleurs <- DonneesCarte_legende <- list() 
-loadDonneesPrimes <- function(path)
+loadDonneesPrimes <- function(path, continue = 1L)
 {
-    gui.show(rpgm.step('main', 'leaflet'), 'progressbar_donnees')
-    gui.setProperties("this", "progressbar_donnees", list(value = 0, progressdescription = "0%"))
-    donnees <<- data.table::fread(path, sep =";", na.strings=c("",NA,"NULL"), select=c("lat", "lng", "prime_ttc", "var_1", "var_2", "var_3"), encoding = 'UTF-8')
-    IS_NULL <- is.na(donnees$lat) | is.na(donnees$lng)
-
-    donnees_null <- donnees[IS_NULL, ]
-    donnees <<- donnees[!IS_NULL, ]
-
-    data.table::setDF(donnees)
-    data.table::setDF(donnees_null)
-
-    donnees_points <- donnees[c("lat", "lng")]
-    donnees_points_sf <<- sf::st_as_sf(donnees_points, coords = c('lng', 'lat'), crs = sf::st_crs(shape[[1]]))
-
-    DonneesCarte[["Primes"]] <<- DonneesCarte_couleurs[["Primes"]] <<- DonneesCarte_legende[["Primes"]] <<- list()
-    for(i in 1:length(shape))
+    #Premier passage
+    if(continue == 1L)
     {
-        Z <- as.data.frame(sf::st_within(donnees_points_sf, shape[[i]])) #dans le polygone ou non, tester si plus performant
-        DonneesCarte[["Primes"]][[i]] <<- as.vector(tapply(donnees$prime_ttc[Z$row.id], factor(Z$col.id, levels = 1:length(shape[[i]]$geometry)), sum))
-        DonneesCarte[["Primes"]][[i]][is.na(DonneesCarte[["Primes"]][[i]])] <<- 0
-        if(length(DonneesCarte[["Primes"]][[i]]) > 1)
-        {
-            DonneesCarte_couleurs[["Primes"]][[i]] <<- interpCol(DonneesCarte[["Primes"]][[i]], couleur_min, couleur_max)
-            plage_legende <- min(DonneesCarte[["Primes"]][[i]]) + c(1, 0.65, 0.35, 0.05)*(max(DonneesCarte[["Primes"]][[i]]) - min(DonneesCarte[["Primes"]][[i]]))
-            DonneesCarte_legende[["Primes"]][[i]] <<- list(couleurs = c(interpCol(plage_legende, couleur_min, couleur_max), couleur_zero), labels = format(c(round(plage_legende), 0), big.mark = " "))
-        }
-        else
-        {
-            DonneesCarte_couleurs[["Primes"]][[i]] <<- couleur_median
-            DonneesCarte_legende[["Primes"]][[i]] <<- list(couleurs = couleur_median, labels = format(round(DonneesCarte[["Primes"]][[i]][1]), big.mark = " "))
-        }
-        DonneesCarte_couleurs[["Primes"]][[i]][DonneesCarte[["Primes"]][[i]] == 0] <<- couleur_zero
-        k <- round(100*i/(n_shape))
-        gui.setProperties("this", "progressbar_donnees", list(value = k, progressdescription = `if`(k < 25, paste0(k, "%"), paste0("Import... ", k, "%"))))
+        gui.show(rpgm.step('main', 'leaflet'), 'progressbar_donnees')
+        gui.setProperties("this", "progressbar_donnees", list(value = 0, progressdescription = "0%"))
+        donnees <<- data.table::fread(path, sep =";", na.strings=c("",NA,"NULL"), select=c("lat", "lng", "prime_ttc", "var_1", "var_2", "var_3"), encoding = 'UTF-8')
+        IS_NULL <- is.na(donnees$lat) | is.na(donnees$lng)
+
+        donnees_null <- donnees[IS_NULL, ]
+        donnees <<- donnees[!IS_NULL, ]
+
+        data.table::setDF(donnees)
+        data.table::setDF(donnees_null)
+
+        donnees_points <- donnees[c("lat", "lng")]
+        donnees_points_sf <<- sf::st_as_sf(donnees_points, coords = c('lng', 'lat'), crs = sf::st_crs(shape[[1]]))
+
+        DonneesCarte[["Primes"]] <<- DonneesCarte_couleurs[["Primes"]] <<- DonneesCarte_legende[["Primes"]] <<- list()
     }
+
+    #Chargement par niveau, reprise si continue > 2L et que ce n'est pas terminé
+    if(continue <= 6L)
+        for(i in continue:length(shape))
+        {
+            Z <- as.data.frame(sf::st_within(donnees_points_sf, shape[[i]])) #dans le polygone ou non, tester si plus performant
+            DonneesCarte[["Primes"]][[i]] <<- as.vector(tapply(donnees$prime_ttc[Z$row.id], factor(Z$col.id, levels = 1:length(shape[[i]]$geometry)), sum))
+            DonneesCarte[["Primes"]][[i]][is.na(DonneesCarte[["Primes"]][[i]])] <<- 0
+            if(length(DonneesCarte[["Primes"]][[i]]) > 1)
+            {
+                DonneesCarte_couleurs[["Primes"]][[i]] <<- interpCol(DonneesCarte[["Primes"]][[i]], couleur_min, couleur_max)
+                plage_legende <- min(DonneesCarte[["Primes"]][[i]]) + c(1, 0.65, 0.35, 0.05)*(max(DonneesCarte[["Primes"]][[i]]) - min(DonneesCarte[["Primes"]][[i]]))
+                DonneesCarte_legende[["Primes"]][[i]] <<- list(couleurs = c(interpCol(plage_legende, couleur_min, couleur_max), couleur_zero), labels = format(c(round(plage_legende), 0), big.mark = " "))
+            }
+            else
+            {
+                DonneesCarte_couleurs[["Primes"]][[i]] <<- couleur_median
+                DonneesCarte_legende[["Primes"]][[i]] <<- list(couleurs = couleur_median, labels = format(round(DonneesCarte[["Primes"]][[i]][1]), big.mark = " "))
+            }
+            DonneesCarte_couleurs[["Primes"]][[i]][DonneesCarte[["Primes"]][[i]] == 0] <<- couleur_zero
+            k <- round(100*i/(n_shape))
+            gui.setProperties("this", "progressbar_donnees", list(value = k, progressdescription = `if`(k < 25, paste0(k, "%"), paste0("Import... ", k, "%"))))
+            if(z <= i)
+            {
+                mapReady <<- i
+                rpgm.sendToJavascript('updateMap', list(empreinte = "exposition", lastShapeContinue = i+1L))
+                return(NULL)
+            }
+        }
+    mapReady <<- 6L
 }
 
 loadDonneesVents <- function(path)
@@ -149,12 +149,18 @@ loadDonneesVents <- function(path)
     {
         Z <- as.data.frame(sf::st_within(vents_points_sf, shape[[i]])) #dans le polygone ou non, tester si plus performant
         DonneesCarte[["Vents"]][[i]] <<- as.vector(tapply(vents$rafales[Z$row.id], factor(Z$col.id, levels = 1:length(shape[[i]]$geometry)), max))
-        DonneesCarte[["Vents"]][[i]][is.na(DonneesCarte[["Vents"]][[i]])] <<- 0
+#        DonneesCarte[["Vents"]][[i]][is.na(DonneesCarte[["Vents"]][[i]])] <<- 0
+        #Interpolation en cas d'absence de mesure
+        I <- is.na(DonneesCarte[["Vents"]][[i]])
+        a <- sf::st_centroid(shape[[i]]$geometry[I])
+        w <- 1/(sf::st_distance(vents_points_sf, a)^2)
+        DonneesCarte[["Vents"]][[i]][I] <<- colSums(w*vents$rafales)/colSums(w)
+
         if(length(DonneesCarte[["Vents"]][[i]]) > 1)
         {
             DonneesCarte_couleurs[["Vents"]][[i]] <<- interpCol2(DonneesCarte[["Vents"]][[i]], c("#3498db", "#2980b9", "#1c2e30"), c(0, 0.5, 1))
             plage_legende <- min(DonneesCarte[["Vents"]][[i]]) + c(1, 0.65, 0.35, 0.05)*(max(DonneesCarte[["Vents"]][[i]]) - min(DonneesCarte[["Vents"]][[i]]))
-            DonneesCarte_legende[["Vents"]][[i]] <<- list(couleurs = c(interpCol2(plage_legende, c("#3498db", "#2980b9", "#1c2e30"), c(0, 0.5, 1)), couleur_zero), labels = format(c(round(plage_legende), 0), big.mark = " "))
+            DonneesCarte_legende[["Vents"]][[i]] <<- list(couleurs = c(interpCol2(plage_legende, c("#3498db", "#2980b9", "#1c2e30"), c(0, 0.5, 1))), labels = format(c(round(plage_legende)), big.mark = " "))
         }
         else
         {
@@ -167,20 +173,21 @@ loadDonneesVents <- function(path)
     }
 }
 
-loadDonnees <- function(nom, path)
+loadDonnees <- function(nom, path, continue = 1L)
 {
     if(nom == "exposition")
-        if(is.null(DonneesCarte[["Primes"]]))
-            loadDonneesPrimes(path)
-        else
+        if(is.null(DonneesCarte[["Primes"]]) || mapReady < 6L)
+        {
             gui.setProperty("this", "loadRepeater", "intervalcode" ,"")
+            loadDonneesPrimes(path, continue)
+        }
     if(nom == "ciaran")
         if(is.null(DonneesCarte[["Vents"]]))
             loadDonneesVents(path)
 }
 
 empreinte <- "exposition"
-mapReady <- FALSE 
+mapReady <- 0L 
 lastView <- NULL
 gui.hide(rpgm.step('main', 'leaflet'), 'var_1')
 gui.hide(rpgm.step('main', 'leaflet'), 'var_2')
