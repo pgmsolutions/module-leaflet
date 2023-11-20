@@ -134,17 +134,15 @@ onRPGMJavascript <- function(message, data){
 #            ))));
             # Markers
             if(empreinte == "exposition")
-            {
                 donnees_loc <- donnees[donnees$lat < data$view$northLat & donnees$lat > data$view$southLat & donnees$lng < data$view$eastLng & donnees$lng > data$view$westLng, ]
-                D <- lapply(seq_len(nrow(donnees_loc)), function(k) list(lat = donnees_loc$lat[k], lng = donnees_loc$lng[k], label = paste0("Prime : <strong>", donnees_loc$prime_ttc[k], "€</strong>.")))
-            }
             else if(empreinte == "ciaran")
-            {
                 donnees_loc <- vents[vents$lat < data$view$northLat & vents$lat > data$view$southLat & vents$lng < data$view$eastLng & vents$lng > data$view$westLng, ]
-                D <- lapply(seq_len(nrow(donnees_loc)), function(k) list(lat = donnees_loc$lat[k], lng = donnees_loc$lng[k], label = paste0("Vents : <strong>", donnees_loc$rafales[k], "km/h</strong>.")))
-            }
-            if(nrow(donnees_loc) <= 500L)
+            if(nrow(donnees_loc) <= 500L && empreinte == "exposition")
             {
+                if(empreinte == "exposition")
+                    D <- lapply(seq_len(nrow(donnees_loc)), function(k) list(lat = donnees_loc$lat[k], lng = donnees_loc$lng[k], label = paste0("Prime : <strong>", donnees_loc$prime_ttc[k], "€</strong>.")))
+                else if(empreinte == "ciaran")
+                    D <- lapply(seq_len(nrow(donnees_loc)), function(k) list(lat = donnees_loc$lat[k], lng = donnees_loc$lng[k], label = paste0("Vents : <strong>", donnees_loc$rafales[k], "km/h</strong>.")))
                 rpgm.sendToJavascript('updateMarkers', list(markers = D))
             }
             else
