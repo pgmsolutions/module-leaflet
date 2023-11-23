@@ -67,8 +67,8 @@ couleur_max <- '#c0392b'
 couleur_median <- '#e67e22'
 couleur_zero <- '#bdc3c7'
 
+Donnees <- list()
 DonneesCartes <- list()
-DonneesCarte <- DonneesCarte_couleurs <- DonneesCarte_legende <- list() 
 loadDonneesPrimes <- function(path, continue = 1L)
 {
     #Premier passage
@@ -77,7 +77,8 @@ loadDonneesPrimes <- function(path, continue = 1L)
         DonneesCartes[["Primes"]] <<- list(
             valeurs = list(),
             couleurs = list(),
-            legendes = list()
+            legendes = list(),
+            unite = "€"
         )
     }
 
@@ -85,14 +86,14 @@ loadDonneesPrimes <- function(path, continue = 1L)
     {
         gui.show(rpgm.step('main', 'leaflet'), 'progressbar_donnees')
         gui.setProperties("this", "progressbar_donnees", list(value = 0, progressdescription = "0%"))
-        donnees <<- data.table::fread(path, sep =";", na.strings=c("",NA,"NULL"), select=c("lat", "lng", "prime_ttc", "var_1", "var_2", "var_3"), encoding = 'UTF-8')
-        IS_NULL <- is.na(donnees$lat) | is.na(donnees$lng)
+        Donnees[["Primes"]] <<- data.table::fread(path, sep =";", na.strings=c("",NA,"NULL"), select=c("lat", "lng", "prime_ttc", "var_1", "var_2", "var_3"), encoding = 'UTF-8')
+        IS_NULL <- is.na(Donnees[["Primes"]]$lat) | is.na(Donnees[["Primes"]]$lng)
 
-        donnees <<- donnees[!IS_NULL, ]
+        Donnees[["Primes"]] <<- Donnees[["Primes"]][!IS_NULL, ]
 
-        data.table::setDF(donnees)
+        data.table::setDF(Donnees[["Primes"]])
 
-        donnees_points <- donnees[c("lat", "lng")]
+        donnees_points <- Donnees[["Primes"]][c("lat", "lng")]
         donnees_points_sf <<- sf::st_as_sf(donnees_points, coords = c('lng', 'lat'), crs = sf::st_crs(shape[[1]]))
     }
 
@@ -101,7 +102,7 @@ loadDonneesPrimes <- function(path, continue = 1L)
         for(i in continue:length(shape))
         {
             Z <- as.data.frame(sf::st_within(donnees_points_sf, shape[[i]])) #dans le polygone ou non, tester si plus performant
-            DonneesCartes[["Primes"]]$valeurs[[i]] <<- as.vector(tapply(donnees$prime_ttc[Z$row.id], factor(Z$col.id, levels = 1:length(shape[[i]]$geometry)), sum))
+            DonneesCartes[["Primes"]]$valeurs[[i]] <<- as.vector(tapply(Donnees[["Primes"]]$prime_ttc[Z$row.id], factor(Z$col.id, levels = 1:length(shape[[i]]$geometry)), sum))
             DonneesCartes[["Primes"]]$valeurs[[i]][is.na(DonneesCartes[["Primes"]]$valeurs[[i]])] <<- 0
             if(length(DonneesCartes[["Primes"]]$valeurs[[i]]) > 1)
             {
@@ -119,24 +120,25 @@ loadDonneesPrimes <- function(path, continue = 1L)
             gui.setProperties("this", "progressbar_donnees", list(value = k, progressdescription = `if`(k < 25, paste0(k, "%"), paste0("Import... ", k, "%"))))
             if(z <= i)
             {
-                mapReady$exposition <<- i
-                rpgm.sendToJavascript('updateMap', list(empreinte = "exposition", lastShapeContinue = i+1L))
+                mapReady$Primes <<- i
+                rpgm.sendToJavascript('updateMap', list(empreinte = "Primes", lastShapeContinue = i+1L))
                 return(NULL)
             }
         }
-    mapReady$exposition <<- 6L
+    mapReady$Primes <<- 6L
     gui.hide("this", 'progressbar_donnees')
 }
 
 loadDonneesVents <- function(path, continue = 1L)
 {
 
-    if(is.null(DonneesCartes[["Vents"]]))
+    if(is.null(DonneesCartes[["Ciaran"]]))
     {
-        DonneesCartes[["Vents"]] <<- list(
+        DonneesCartes[["Ciaran"]] <<- list(
             valeurs = list(),
             couleurs = list(),
-            legendes = list()
+            legendes = list(),
+            unite = "km/h"
         )
     }
 
@@ -144,19 +146,19 @@ loadDonneesVents <- function(path, continue = 1L)
     {
         gui.show(rpgm.step('main', 'leaflet'), 'progressbar_donnees')
         gui.setProperties("this", "progressbar_donnees", list(value = 0, progressdescription = "0%"))
-        vents <<- data.table::fread(path, sep =";", na.strings=c("",NA,"NULL"), select=c("Coordonnees", "Rafale sur les 10 dernieres minutes"))
-        colnames(vents) <<- c("coord", "rafales")
-        vents <<- vents[!is.na(vents$coord) & !is.na(vents$rafales)]
-        max_rafales <- tapply(vents$rafales, vents$coord, max)
-        vents <<- data.frame(coord = names(max_rafales), rafales = as.vector(max_rafales))
-        colnames(vents) <<- c("coord", "rafales")
-        vents[, c("lat", "lng")] <<- data.table::tstrsplit(vents$coord, ", ")
-        vents$lat <<- as.numeric(vents$lat)
-        vents$lng <<- as.numeric(vents$lng)
-        vents$coord <<- NULL
-        vents$rafales <<- vents$rafales*3.6
+        Donnees[["Ciaran"]] <<- data.table::fread(path, sep =";", na.strings=c("",NA,"NULL"), select=c("Coordonnees", "Rafale sur les 10 dernieres minutes"))
+        colnames(Donnees[["Ciaran"]]) <<- c("coord", "rafales")
+        Donnees[["Ciaran"]] <<- Donnees[["Ciaran"]][!is.na(Donnees[["Ciaran"]]$coord) & !is.na(Donnees[["Ciaran"]]$rafales)]
+        max_rafales <- tapply(Donnees[["Ciaran"]]$rafales, Donnees[["Ciaran"]]$coord, max)
+        Donnees[["Ciaran"]] <<- data.frame(coord = names(max_rafales), rafales = as.vector(max_rafales))
+        colnames(Donnees[["Ciaran"]]) <<- c("coord", "rafales")
+        Donnees[["Ciaran"]][, c("lat", "lng")] <<- data.table::tstrsplit(Donnees[["Ciaran"]]$coord, ", ")
+        Donnees[["Ciaran"]]$lat <<- as.numeric(Donnees[["Ciaran"]]$lat)
+        Donnees[["Ciaran"]]$lng <<- as.numeric(Donnees[["Ciaran"]]$lng)
+        Donnees[["Ciaran"]]$coord <<- NULL
+        Donnees[["Ciaran"]]$rafales <<- Donnees[["Ciaran"]]$rafales*3.6
 
-        vents_points <- vents[c("lat", "lng")]
+        vents_points <- Donnees[["Ciaran"]][c("lat", "lng")]
         vents_points_sf <<- sf::st_as_sf(vents_points, coords = c('lng', 'lat'), crs = sf::st_crs(shape[[1]]))
     }
 
@@ -164,51 +166,51 @@ loadDonneesVents <- function(path, continue = 1L)
         for(i in continue:length(shape))
         {
             Z <- as.data.frame(sf::st_within(vents_points_sf, shape[[i]])) #dans le polygone ou non, tester si plus performant
-            DonneesCartes[["Vents"]]$valeurs[[i]] <<- as.vector(tapply(vents$rafales[Z$row.id], factor(Z$col.id, levels = 1:length(shape[[i]]$geometry)), max))
-    #        DonneesCartes[["Vents"]]$valeurs[[i]][is.na(DonneesCartes[["Vents"]]$valeurs[[i]])] <<- 0
+            DonneesCartes[["Ciaran"]]$valeurs[[i]] <<- as.vector(tapply(Donnees[["Ciaran"]]$rafales[Z$row.id], factor(Z$col.id, levels = 1:length(shape[[i]]$geometry)), max))
+    #        DonneesCartes[["Ciaran"]]$valeurs[[i]][is.na(DonneesCartes[["Ciaran"]]$valeurs[[i]])] <<- 0
             #Interpolation en cas d'absence de mesure
-            I <- is.na(DonneesCartes[["Vents"]]$valeurs[[i]])
+            I <- is.na(DonneesCartes[["Ciaran"]]$valeurs[[i]])
             a <- sf::st_centroid(shape[[i]]$geometry[I])
             w <- 1/(sf::st_distance(vents_points_sf, a)^2)
-            DonneesCartes[["Vents"]]$valeurs[[i]][I] <<- colSums(w*vents$rafales)/colSums(w)
+            DonneesCartes[["Ciaran"]]$valeurs[[i]][I] <<- colSums(w*Donnees[["Ciaran"]]$rafales)/colSums(w)
 
-            if(length(DonneesCartes[["Vents"]]$valeurs[[i]]) > 1)
+            if(length(DonneesCartes[["Ciaran"]]$valeurs[[i]]) > 1)
             {
-                DonneesCartes[["Vents"]]$couleurs[[i]] <<- interpCol2(DonneesCartes[["Vents"]]$valeurs[[i]], c("#acd0f1", "#3498db", "#2980b9", "#1c2e30"), c(0, 0.25, 0.5, 1))
-                plage_legende <- min(DonneesCartes[["Vents"]]$valeurs[[i]]) + c(1, 0.5, 0.25, 0)*(max(DonneesCartes[["Vents"]]$valeurs[[i]]) - min(DonneesCartes[["Vents"]]$valeurs[[i]]))
-                DonneesCartes[["Vents"]]$legendes[[i]] <<- list(couleurs = c(interpCol2(plage_legende, c("#acd0f1", "#3498db", "#2980b9", "#1c2e30"), c(0, 0.25, 0.5, 1))), labels = format(c(round(plage_legende)), big.mark = " "))
+                DonneesCartes[["Ciaran"]]$couleurs[[i]] <<- interpCol2(DonneesCartes[["Ciaran"]]$valeurs[[i]], c("#acd0f1", "#3498db", "#2980b9", "#1c2e30"), c(0, 0.25, 0.5, 1))
+                plage_legende <- min(DonneesCartes[["Ciaran"]]$valeurs[[i]]) + c(1, 0.5, 0.25, 0)*(max(DonneesCartes[["Ciaran"]]$valeurs[[i]]) - min(DonneesCartes[["Ciaran"]]$valeurs[[i]]))
+                DonneesCartes[["Ciaran"]]$legendes[[i]] <<- list(couleurs = c(interpCol2(plage_legende, c("#acd0f1", "#3498db", "#2980b9", "#1c2e30"), c(0, 0.25, 0.5, 1))), labels = format(c(round(plage_legende)), big.mark = " "))
             }
             else
             {
-                DonneesCartes[["Vents"]]$couleurs[[i]] <<- "#1c2e30"
-                DonneesCartes[["Vents"]]$legendes[[i]] <<- list(couleurs = "#1c2e30", labels = format(round(DonneesCartes[["Vents"]]$valeurs[[i]][1]), big.mark = " "))
+                DonneesCartes[["Ciaran"]]$couleurs[[i]] <<- "#1c2e30"
+                DonneesCartes[["Ciaran"]]$legendes[[i]] <<- list(couleurs = "#1c2e30", labels = format(round(DonneesCartes[["Ciaran"]]$valeurs[[i]][1]), big.mark = " "))
             }
-            #DonneesCarte_couleurs[["Vents"]][[i]][DonneesCarte[["Vents"]][[i]] == 0] <<- couleur_zero
+            #DonneesCarte_couleurs[["Ciaran"]][[i]][DonneesCarte[["Ciaran"]][[i]] == 0] <<- couleur_zero
             k <- round(100*i/(n_shape))
             gui.setProperties("this", "progressbar_donnees", list(value = k, progressdescription = `if`(k < 25, paste0(k, "%"), paste0("Import... ", k, "%"))))
             if(z <= i)
             {
-                mapReady$ciaran <<- i
-                rpgm.sendToJavascript('updateMap', list(empreinte = "ciaran", lastShapeContinue = i+1L))
+                mapReady$Ciaran <<- i
+                rpgm.sendToJavascript('updateMap', list(empreinte = "Ciaran", lastShapeContinue = i+1L))
                 return(NULL)
             }
         }
-    mapReady$ciaran <<- 6L
+    mapReady$Ciaran <<- 6L
     gui.hide("this", 'progressbar_donnees')
 }
 
 loadDonnees <- function(nom, path, continue = 1L)
 {
-    if(nom == "exposition")
-        if(is.null(DonneesCartes[["Primes"]]) || mapReady$exposition < 6L)
+    if(nom == "Primes")
+        if(is.null(DonneesCartes[["Primes"]]) || mapReady$Primes < 6L)
         {
             gui.setProperty("this", "loadRepeater", "intervalcode" ,"")
             loadDonneesPrimes(path, continue)
         }
         else
             gui.hide("this", 'progressbar_donnees')
-    if(nom == "ciaran")
-        if(is.null(DonneesCartes[["Vents"]]) || mapReady$ciaran < 6L)
+    if(nom == "Ciaran")
+        if(is.null(DonneesCartes[["Ciaran"]]) || mapReady$Ciaran < 6L)
         {
             loadDonneesVents(path, continue)
         }
@@ -216,9 +218,9 @@ loadDonnees <- function(nom, path, continue = 1L)
             gui.hide("this", 'progressbar_donnees')
 }
 
-path <- list(exposition = "donnees/aportfolios.csv", ciaran = "donnees/synop.csv")
-empreinte <- "exposition"
-mapReady <- list(exposition = 0L, ciaran = 0L)
+path <- list(Primes = "donnees/aportfolios.csv", Ciaran = "donnees/synop.csv")
+empreinte <- "Primes"
+mapReady <- list(Primes = 0L, Ciaran = 0L)
 lastView <- NULL
 gui.hide(rpgm.step('main', 'leaflet'), 'var_1')
 gui.hide(rpgm.step('main', 'leaflet'), 'var_2')

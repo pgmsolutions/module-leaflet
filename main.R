@@ -46,11 +46,11 @@ plotly_graph <- function(data)
 {
         z <- getLvlPolygonToDisplay(data$zoomLevel)
         selected_shape <- shape[[z]][data$id, ]
-        assures <- donnees[t(sf::st_contains(selected_shape, donnees_points_sf, sparse = FALSE)), ]
+        assures <- Donnees[["Primes"]][t(sf::st_contains(selected_shape, donnees_points_sf, sparse = FALSE)), ]
 
         #layout commun
         layout = list(
-            title = plotlyTitle(selected_shape$COUNTRY, selected_shape$NAME_1, selected_shape$NAME_2, selected_shape$NAME_3, selected_shape$NAME_4, selected_shape$NAME_5, DonneesCarte[['Primes']][[z]][as.integer(data$id)]),
+            title = plotlyTitle(selected_shape$COUNTRY, selected_shape$NAME_1, selected_shape$NAME_2, selected_shape$NAME_3, selected_shape$NAME_4, selected_shape$NAME_5, DonneesCartes[["Primes"]]$valeurs[[z]][as.integer(data$id)]),
             height = 350,
             width = 450,
             font = list(
@@ -109,42 +109,30 @@ onRPGMJavascript <- function(message, data){
                 }
                 if(l > 1)
                 {
-                    if(empreinte == "exposition")
-                        rpgm.sendToJavascript('addGeoJSON', list(points=P, id=i, tooltip=leafletTooltipDonnees(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], list(Primes = list(value = DonneesCartes[["Primes"]]$valeurs[[z]][i], unit = "€"))), color=DonneesCartes[["Primes"]]$couleurs[[z]][i]))
-                    else if(empreinte == "ciaran")
-                        rpgm.sendToJavascript('addGeoJSON', list(points=P, id=i, tooltip=leafletTooltipDonnees(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], list(Primes = list(value = DonneesCartes[["Primes"]]$valeurs[[z]][i], unit = "€"), Vents = list(value = DonneesCartes[["Vents"]]$valeurs[[z]][i], unit = "km/h"))), color=DonneesCartes[["Vents"]]$couleurs[[z]][i]))
+                    if(empreinte == "Primes")
+                        rpgm.sendToJavascript('addGeoJSON', list(points=P, id=i, tooltip=leafletTooltipDonnees(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], list(Primes = list(value = DonneesCartes[[empreinte]]$valeurs[[z]][i], unit = DonneesCartes[[empreinte]]$unite))), color=DonneesCartes[[empreinte]]$couleurs[[z]][i]))
+                    else if(empreinte == "Ciaran")
+                        rpgm.sendToJavascript('addGeoJSON', list(points=P, id=i, tooltip=leafletTooltipDonnees(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], list(Primes = list(value = DonneesCartes[["Primes"]]$valeurs[[z]][i], unit = "€"), Vents = list(value = DonneesCartes[[empreinte]]$valeurs[[z]][i], unit = DonneesCartes[[empreinte]]$unite))), color=DonneesCartes[[empreinte]]$couleurs[[z]][i]))
                     total <- total+1
                 }
             }
             
             # Erase previous drawings and draw all polygons addded in queue
             rpgm.sendToJavascript('drawGeoJSON', list());
-            if(empreinte == "exposition")
                 rpgm.sendToJavascript('updateLegend', list(content=
-                    getLegend(lapply(seq_len(length(DonneesCartes[["Primes"]]$legendes[[z]]$couleurs)), function(k) list(color = DonneesCartes[["Primes"]]$legendes[[z]]$couleurs[k], label = DonneesCartes[["Primes"]]$legendes[[z]]$labels[k])), "€"
+                    getLegend(lapply(seq_len(length(DonneesCartes[[empreinte]]$legendes[[z]]$couleurs)), function(k) list(color = DonneesCartes[[empreinte]]$legendes[[z]]$couleurs[k], label = DonneesCartes[[empreinte]]$legendes[[z]]$labels[k])), DonneesCartes[[empreinte]]$unite
                 )))
-            else if(empreinte == "ciaran")
-                rpgm.sendToJavascript('updateLegend', list(content=
-                    getLegend(lapply(seq_len(length(DonneesCartes[["Vents"]]$legendes[[z]]$couleurs)), function(k) list(color = DonneesCartes[["Vents"]]$legendes[[z]]$couleurs[k], label = DonneesCartes[["Vents"]]$legendes[[z]]$labels[k])), "km/h"
-                )))
-#            rpgm.sendToJavascript('updateLegend', list(content=getLegend(list(
-#                list(color='#FED976', label='100000 +'),
-#                list(color='#FEB24C', label='Elephant - Carotte'),
-#                list(color='#FD8D3C', label='50 - 1337'),
-#                list(color='#FC4E2A', label='20 - 40'),
-#                list(color='#800026', label='10 - 20')
-#            ))));
             # Markers
-            if(empreinte == "exposition")
-                donnees_loc <- donnees[donnees$lat < data$view$northLat & donnees$lat > data$view$southLat & donnees$lng < data$view$eastLng & donnees$lng > data$view$westLng, ]
-            else if(empreinte == "ciaran")
-                donnees_loc <- vents[vents$lat < data$view$northLat & vents$lat > data$view$southLat & vents$lng < data$view$eastLng & vents$lng > data$view$westLng, ]
-            if(nrow(donnees_loc) <= 500L && empreinte == "exposition")
+            if(empreinte == "Primes")
+                donnees_loc <- Donnees[["Primes"]][Donnees[["Primes"]]$lat < data$view$northLat & Donnees[["Primes"]]$lat > data$view$southLat & Donnees[["Primes"]]$lng < data$view$eastLng & Donnees[["Primes"]]$lng > data$view$westLng, ]
+            else if(empreinte == "Ciaran")
+                donnees_loc <- Donnees[["Ciaran"]][Donnees[["Ciaran"]]$lat < data$view$northLat & Donnees[["Ciaran"]]$lat > data$view$southLat & Donnees[["Ciaran"]]$lng < data$view$eastLng & Donnees[["Ciaran"]]$lng > data$view$westLng, ]
+            if(nrow(donnees_loc) <= 500L && empreinte == "Primes")
             {
-                if(empreinte == "exposition")
-                    D <- lapply(seq_len(nrow(donnees_loc)), function(k) list(lat = donnees_loc$lat[k], lng = donnees_loc$lng[k], label = paste0("Prime : <strong>", donnees_loc$prime_ttc[k], "€</strong>.")))
-                else if(empreinte == "ciaran")
-                    D <- lapply(seq_len(nrow(donnees_loc)), function(k) list(lat = donnees_loc$lat[k], lng = donnees_loc$lng[k], label = paste0("Vents : <strong>", donnees_loc$rafales[k], "km/h</strong>.")))
+                if(empreinte == "Primes")
+                    D <- lapply(seq_len(nrow(donnees_loc)), function(k) list(lat = donnees_loc$lat[k], lng = donnees_loc$lng[k], label = paste0(empreinte, " : <strong>", donnees_loc$prime_ttc[k], DonneesCartes[[empreinte]]$unite, "</strong>.")))
+                else if(empreinte == "Ciaran")
+                    D <- lapply(seq_len(nrow(donnees_loc)), function(k) list(lat = donnees_loc$lat[k], lng = donnees_loc$lng[k], label = paste0(empreinte, " : <strong>", donnees_loc$rafales[k], DonneesCartes[[empreinte]]$unite, "</strong>.")))
                 rpgm.sendToJavascript('updateMarkers', list(markers = D))
             }
             else

@@ -252,7 +252,7 @@
 							"type": "select",
 							"data": {
 								"subtype": "select",
-								"value": "exposition",
+								"value": "Primes",
 								"isr": false,
 								"css": "",
 								"margintop": "10",
@@ -265,11 +265,11 @@
 								"condition": "",
 								"choices": [
 									{
-										"value": "exposition",
-										"text": "Aucune (exposition)"
+										"value": "Primes",
+										"text": "Exposition"
 									},
 									{
-										"value": "ciaran",
+										"value": "Ciaran",
 										"text": "Tempête Ciaran"
 									}
 								],
