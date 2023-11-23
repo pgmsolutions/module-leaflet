@@ -110,9 +110,9 @@ onRPGMJavascript <- function(message, data){
                 if(l > 1)
                 {
                     if(empreinte == "exposition")
-                        rpgm.sendToJavascript('addGeoJSON', list(points=P, id=i, tooltip=leafletTooltipDonnees(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], list(Primes = list(value = DonneesCarte[["Primes"]][[z]][i], unit = "€"))), color=DonneesCarte_couleurs[["Primes"]][[z]][i]))
+                        rpgm.sendToJavascript('addGeoJSON', list(points=P, id=i, tooltip=leafletTooltipDonnees(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], list(Primes = list(value = DonneesCartes[["Primes"]]$valeurs[[z]][i], unit = "€"))), color=DonneesCartes[["Primes"]]$couleurs[[z]][i]))
                     else if(empreinte == "ciaran")
-                        rpgm.sendToJavascript('addGeoJSON', list(points=P, id=i, tooltip=leafletTooltipDonnees(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], list(Primes = list(value = DonneesCarte[["Primes"]][[z]][i], unit = "€"), Vents = list(value = DonneesCarte[["Vents"]][[z]][i], unit = "km/h"))), color=DonneesCarte_couleurs[["Vents"]][[z]][i]))
+                        rpgm.sendToJavascript('addGeoJSON', list(points=P, id=i, tooltip=leafletTooltipDonnees(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], list(Primes = list(value = DonneesCartes[["Primes"]]$valeurs[[z]][i], unit = "€"), Vents = list(value = DonneesCartes[["Vents"]]$valeurs[[z]][i], unit = "km/h"))), color=DonneesCartes[["Vents"]]$couleurs[[z]][i]))
                     total <- total+1
                 }
             }
@@ -121,11 +121,11 @@ onRPGMJavascript <- function(message, data){
             rpgm.sendToJavascript('drawGeoJSON', list());
             if(empreinte == "exposition")
                 rpgm.sendToJavascript('updateLegend', list(content=
-                    getLegend(lapply(seq_len(length(DonneesCarte_legende[["Primes"]][[z]]$couleurs)), function(k) list(color = DonneesCarte_legende[["Primes"]][[z]]$couleurs[k], label = DonneesCarte_legende[["Primes"]][[z]]$labels[k])), "€"
+                    getLegend(lapply(seq_len(length(DonneesCartes[["Primes"]]$legendes[[z]]$couleurs)), function(k) list(color = DonneesCartes[["Primes"]]$legendes[[z]]$couleurs[k], label = DonneesCartes[["Primes"]]$legendes[[z]]$labels[k])), "€"
                 )))
             else if(empreinte == "ciaran")
                 rpgm.sendToJavascript('updateLegend', list(content=
-                    getLegend(lapply(seq_len(length(DonneesCarte_legende[["Vents"]][[z]]$couleurs)), function(k) list(color = DonneesCarte_legende[["Vents"]][[z]]$couleurs[k], label = DonneesCarte_legende[["Vents"]][[z]]$labels[k])), "km/h"
+                    getLegend(lapply(seq_len(length(DonneesCartes[["Vents"]]$legendes[[z]]$couleurs)), function(k) list(color = DonneesCartes[["Vents"]]$legendes[[z]]$couleurs[k], label = DonneesCartes[["Vents"]]$legendes[[z]]$labels[k])), "km/h"
                 )))
 #            rpgm.sendToJavascript('updateLegend', list(content=getLegend(list(
 #                list(color='#FED976', label='100000 +'),
