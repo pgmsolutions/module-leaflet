@@ -124,9 +124,7 @@ onRPGMJavascript <- function(message, data){
                 )))
             # Markers
             if(empreinte == "Primes")
-                donnees_loc <- Donnees[["Primes"]][Donnees[["Primes"]]$lat < data$view$northLat & Donnees[["Primes"]]$lat > data$view$southLat & Donnees[["Primes"]]$lng < data$view$eastLng & Donnees[["Primes"]]$lng > data$view$westLng, ]
-            else if(empreinte == "Ciaran")
-                donnees_loc <- Donnees[["Ciaran"]][Donnees[["Ciaran"]]$lat < data$view$northLat & Donnees[["Ciaran"]]$lat > data$view$southLat & Donnees[["Ciaran"]]$lng < data$view$eastLng & Donnees[["Ciaran"]]$lng > data$view$westLng, ]
+                donnees_loc <- Donnees[[empreinte]][Donnees[[empreinte]]$lat < data$view$northLat & Donnees[[empreinte]]$lat > data$view$southLat & Donnees[[empreinte]]$lng < data$view$eastLng & Donnees[[empreinte]]$lng > data$view$westLng, ]
             if(nrow(donnees_loc) <= 500L && empreinte == "Primes")
             {
                 if(empreinte == "Primes")
