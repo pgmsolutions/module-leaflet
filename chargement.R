@@ -202,7 +202,7 @@ loadDonneesVents <- function(path, continue = 1L)
 loadDonnees <- function(nom, path, continue = 1L)
 {
     if(nom == "Primes")
-        if(is.null(DonneesCartes[["Primes"]]) || mapReady$Primes < 6L)
+        if(is.null(DonneesCartes[[nom]]) || mapReady[[nom]] < 6L)
         {
             gui.setProperty("this", "loadRepeater", "intervalcode" ,"")
             loadDonneesPrimes(path, continue)
@@ -210,7 +210,7 @@ loadDonnees <- function(nom, path, continue = 1L)
         else
             gui.hide("this", 'progressbar_donnees')
     if(nom == "Ciaran")
-        if(is.null(DonneesCartes[["Ciaran"]]) || mapReady$Ciaran < 6L)
+        if(is.null(DonneesCartes[[nom]]) || mapReady[[nom]] < 6L)
         {
             loadDonneesVents(path, continue)
         }
