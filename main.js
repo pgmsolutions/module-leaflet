@@ -11,7 +11,6 @@ window.MapManager = new class {
         this._map = null;
         this._mapInfo = null;
         this._markerIcon = null;
-        this._markerUrl = null;
 
         /** All draw stuff */
         this._queueGeoJSON = [];
@@ -35,7 +34,7 @@ window.MapManager = new class {
      */
     initialize(){
         RPGM.on('didEnterStep', this.initializeMap); // Function called when entered a new step
-        RPGM.on('didReceiveJavascriptMessage', (message, data)=>{
+        RPGM.on('didReceiveMessage', (message, data)=>{
             if(message === 'addGeoJSON'){
                 this.addGeoJSON(data.points, data.id, data.tooltip, data.color);
             }
@@ -49,7 +48,7 @@ window.MapManager = new class {
                 this.sendChange();
                 if (typeof data.empreinte !== 'undefined')
                 {
-                    RPGM.sendToLanguage('r', 'loadDonneesContinue', {
+                    RPGM.sendMessage('r', 'loadDonneesContinue', {
                         empreinte: data.empreinte,
                         lastShapeContinue: data.lastShapeContinue
                     });
@@ -61,21 +60,15 @@ window.MapManager = new class {
             else if(message === 'resetView'){
                 this._map.setView([48., 2.], 5);
             }
-            else if(message === 'map.setIconUrl'){
-                if(!window.location.href.includes('http')){
-                    this._markerUrl = data.url;
-                }
-            }
         });
-        this.initializeMap(); // Try to initialize now for RPGM Server
     }
 
     /**
      * Initialize the map
      */
-    async initializeMap(){
+    async initializeMap(stepId){
         // Stop if the user is not in the correct GUI
-        if(RPGM.getCurrentStepId() !== 'leaflet'){
+        if(stepId !== 'leaflet'){
             return;
         }
 
@@ -96,12 +89,8 @@ window.MapManager = new class {
         }).addTo(this._map);
 
         // Icon
-        if(window.location.href.includes('http')){
-            const parts = window.location.href.split('/').pop();
-            this._markerUrl = '/assets-instances/programs/'+parts+'/leaflet/icon.png';
-        }
         this._markerIcon = L.icon({
-            iconUrl:      this._markerUrl,
+            iconUrl:      RPGM.getOutputURL('icon.png'),
             iconSize:     [48, 48],
             iconAnchor:   [24, 48],
             popupAnchor:  [0, -48]
@@ -137,7 +126,7 @@ window.MapManager = new class {
 
         // Use for debugging (to delete)
         this._map.on('click', (e)=>{
-            RPGM.sendToLanguage('r', 'mapClick', {
+            RPGM.sendMessage('r', 'mapClick', {
                 coordinates: {
                     lat: e.latlng.lat,
                     lng: e.latlng.lng
@@ -161,7 +150,7 @@ window.MapManager = new class {
      * Actually send the map state to R.
      */
     sendChange(){
-        RPGM.sendToLanguage('r', 'mapState', {
+        RPGM.sendMessage('r', 'mapState', {
             view: {
                 northLat: this._map.getBounds().getNorth(),
                 eastLng: this._map.getBounds().getEast(),
@@ -247,7 +236,7 @@ window.MapManager = new class {
         this._mapInfo.update();
     }
     zoomToFeature(e){
-        RPGM.sendToLanguage('r', 'zoneClick', {
+        RPGM.sendMessage('r', 'zoneClick', {
             id: e.target.feature.properties.id,
             zoomLevel: this._map.getZoom(),
             tooltip: e.target.feature.properties.tooltip
