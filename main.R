@@ -51,8 +51,6 @@ plotly_graph <- function(data)
         #layout commun
         layout = list(
             title = plotlyTitle(selected_shape$COUNTRY, selected_shape$NAME_1, selected_shape$NAME_2, selected_shape$NAME_3, selected_shape$NAME_4, selected_shape$NAME_5, DonneesCartes[["Primes"]]$valeurs[[z]][as.integer(data$id)]),
-            height = 350,
-            width = 450,
             font = list(
                 color = '#ecf0f1'
             ),
