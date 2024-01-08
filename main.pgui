@@ -4,6 +4,23 @@
 			"id": "",
 			"type": "label",
 			"data": {
+				"value": "<a href=\"https//scor.com\" class=\"pgm-button pgm-button-primary pgm-button-lg\" style=\"text-decoration: none\">SCOR.com</a>",
+				"isr": false,
+				"css": "",
+				"margintop": "10",
+				"labeltext": "",
+				"labelposition": "left",
+				"helptext": "",
+				"helpposition": "bottom",
+				"fontsize": "14",
+				"fontfamily": "default",
+				"fontcolor": "#000000"
+			}
+		},
+		{
+			"id": "",
+			"type": "label",
+			"data": {
 				"value": "Exposition et Emprunte Cat Nat",
 				"isr": false,
 				"css": "",
@@ -322,6 +339,23 @@
 			"data": {
 				"intervalcode": "loadDonnees(empreinte, path[[empreinte]]);",
 				"intervaltime": "200"
+			}
+		},
+		{
+			"id": "",
+			"type": "button",
+			"data": {
+				"value": "test",
+				"isr": false,
+				"css": "",
+				"margintop": "10",
+				"labeltext": "",
+				"labelposition": "left",
+				"helptext": "",
+				"helpposition": "bottom",
+				"onpress": "rpgm.open(\"http://scor.com\")",
+				"buttonsize": "md",
+				"buttondesign": "primary"
 			}
 		}
 	],
