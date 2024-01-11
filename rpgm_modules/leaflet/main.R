@@ -7,7 +7,7 @@ source(rpgm.pgmFilePath('rpgm_modules/leaflet/utilities.R'))
 
 #### CREATION ####
 Leaflet.create <- function(mapId, step, widgetId, layerURL, height = 512, options = list(), layerOptions = list()){
-    gui.setValue(step, widget, paste0('<div id="leaflet-', .leaflet$nextMapId, '" style="height: ', height ,'px"></div>'))
+    gui.setValue(step, widget, paste0('<div id="leaflet-', mapId, '" style="height: ', height ,'px"></div>'))
     .leaflet$maps[[mapId]] <- list(
         id=mapId,
         step=step,
@@ -35,6 +35,9 @@ Leaflet.fitBounds <- function(mapId, bounds){
 }
 
 #### MARKERS ####
+Leaflet.createIcon <- function(iconId, options){
+    rpgm.sendToJavascript('leaflet/icon/create', list(iconId=iconId, options=options))
+}
 Leaflet.marker <- function(latlng, popup, options = list()){
     return(list(
         pos=latlng,
