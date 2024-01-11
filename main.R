@@ -1,5 +1,6 @@
 setDefaultView <- function(){
-    rpgm.sendToJavascript('resetView', list()); # resetView doesn't not need data, so we use an empty list
+    Leaflet.setView('main', Leaflet.Latlng(48, 2));
+    Leaflet.setZoom('main', 5);
 }
 
 doDisplayPolygon <- function(Z, view)
@@ -108,18 +109,16 @@ rpgm.on('didReceiveMessage', function(message, data){
                 if(l > 1)
                 {
                     if(empreinte == "Primes")
-                        rpgm.sendToJavascript('addGeoJSON', list(points=P, id=i, tooltip=leafletTooltipDonnees(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], list(Primes = list(value = DonneesCartes[[empreinte]]$valeurs[[z]][i], unit = DonneesCartes[[empreinte]]$unite))), color=DonneesCartes[[empreinte]]$couleurs[[z]][i]))
+                        Leaflet.addGeoJSON('main', list(points=P, id=i, tooltip=leafletTooltipDonnees(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], list(Primes = list(value = DonneesCartes[[empreinte]]$valeurs[[z]][i], unit = DonneesCartes[[empreinte]]$unite))), color=DonneesCartes[[empreinte]]$couleurs[[z]][i]))
                     else if(empreinte == "Ciaran")
-                        rpgm.sendToJavascript('addGeoJSON', list(points=P, id=i, tooltip=leafletTooltipDonnees(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], list(Primes = list(value = DonneesCartes[["Primes"]]$valeurs[[z]][i], unit = "€"), Vents = list(value = DonneesCartes[[empreinte]]$valeurs[[z]][i], unit = DonneesCartes[[empreinte]]$unite))), color=DonneesCartes[[empreinte]]$couleurs[[z]][i]))
+                        Leaflet.addGeoJSON('main', list(points=P, id=i, tooltip=leafletTooltipDonnees(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], list(Primes = list(value = DonneesCartes[["Primes"]]$valeurs[[z]][i], unit = "€"), Vents = list(value = DonneesCartes[[empreinte]]$valeurs[[z]][i], unit = DonneesCartes[[empreinte]]$unite))), color=DonneesCartes[[empreinte]]$couleurs[[z]][i]))
                     total <- total+1
                 }
             }
             
             # Erase previous drawings and draw all polygons addded in queue
-            rpgm.sendToJavascript('drawGeoJSON', list());
-                rpgm.sendToJavascript('updateLegend', list(content=
-                    getLegend(lapply(seq_len(length(DonneesCartes[[empreinte]]$legendes[[z]]$couleurs)), function(k) list(color = DonneesCartes[[empreinte]]$legendes[[z]]$couleurs[k], label = DonneesCartes[[empreinte]]$legendes[[z]]$labels[k])), DonneesCartes[[empreinte]]$unite
-                )))
+            Leaflet.flushGeoJSON()
+            Leaflet.updateLegend('main', getLegend(lapply(seq_len(length(DonneesCartes[[empreinte]]$legendes[[z]]$couleurs)), function(k) list(color = DonneesCartes[[empreinte]]$legendes[[z]]$couleurs[k], label = DonneesCartes[[empreinte]]$legendes[[z]]$labels[k])), DonneesCartes[[empreinte]]$unite))
             # Markers
             if(empreinte == "Primes")
                 donnees_loc <- Donnees[[empreinte]][Donnees[[empreinte]]$lat < data$view$northLat & Donnees[[empreinte]]$lat > data$view$southLat & Donnees[[empreinte]]$lng < data$view$eastLng & Donnees[[empreinte]]$lng > data$view$westLng, ]
@@ -129,11 +128,11 @@ rpgm.on('didReceiveMessage', function(message, data){
                     D <- lapply(seq_len(nrow(donnees_loc)), function(k) list(lat = donnees_loc$lat[k], lng = donnees_loc$lng[k], label = paste0(empreinte, " : <strong>", donnees_loc$prime_ttc[k], DonneesCartes[[empreinte]]$unite, "</strong>.")))
                 else if(empreinte == "Ciaran")
                     D <- lapply(seq_len(nrow(donnees_loc)), function(k) list(lat = donnees_loc$lat[k], lng = donnees_loc$lng[k], label = paste0(empreinte, " : <strong>", donnees_loc$rafales[k], DonneesCartes[[empreinte]]$unite, "</strong>.")))
-                rpgm.sendToJavascript('updateMarkers', list(markers = D))
+                Leaflet.updateMarkers('main', D)
             }
             else
             {
-                rpgm.sendToJavascript('updateMarkers', list(markers = list()))
+                Leaflet.updateMarkers('main', list())
             }
         }
     }

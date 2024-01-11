@@ -1,12 +1,12 @@
 .leaflet <- new.env(parent=emptyenv())
 .leaflet$maps <- list()
 
-source(rpgm.pgmFilePath('rpgm_modules/leaflet/events.R'))
-source(rpgm.pgmFilePath('rpgm_modules/leaflet/javascript.R'))
-source(rpgm.pgmFilePath('rpgm_modules/leaflet/utilities.R'))
+source(rpgm.pgmFilePath('rpgm_modules/leaflet/R/events.R'))
+source(rpgm.pgmFilePath('rpgm_modules/leaflet/R/javascript.R'))
+source(rpgm.pgmFilePath('rpgm_modules/leaflet/R/utilities.R'))
 
 #### CREATION ####
-Leaflet.create <- function(mapId, step, widgetId, layerURL, height = 512, options = list(), layerOptions = list()){
+Leaflet.createMap <- function(mapId, step, widgetId, layerURL, height = 512, options = list(), layerOptions = list()){
     gui.setValue(step, widget, paste0('<div id="leaflet-', mapId, '" style="height: ', height ,'px"></div>'))
     .leaflet$maps[[mapId]] <- list(
         id=mapId,
@@ -25,39 +25,40 @@ Leaflet.create <- function(mapId, step, widgetId, layerURL, height = 512, option
 
 #### VIEWS ####
 Leaflet.setView <- function(mapId, center, zoom){
-    rpgm.sendToJavascript('leaflet/setView', list(mapId=mapId, center=center, zoom=zoom))
+    rpgm.sendToJavascript('leaflet/map/view', list(mapId=mapId, center=center, zoom=zoom))
 }
 Leaflet.setZoom <- function(mapId, zoom){
-    rpgm.sendToJavascript('leaflet/setZoom', list(mapId=mapId, zoom=zoom))
+    rpgm.sendToJavascript('leaflet/map/zoom', list(mapId=mapId, zoom=zoom))
 }
 Leaflet.fitBounds <- function(mapId, bounds){
-    rpgm.sendToJavascript('leaflet/fitBounds', list(mapId=mapId, bounds=bounds))
+    rpgm.sendToJavascript('leaflet/map/fit', list(mapId=mapId, bounds=bounds))
 }
 
-#### MARKERS ####
+#### MARKERS & ICONS ####
 Leaflet.createIcon <- function(iconId, options){
     rpgm.sendToJavascript('leaflet/icon/create', list(iconId=iconId, options=options))
 }
-Leaflet.marker <- function(latlng, popup, options = list()){
+Leaflet.marker <- function(iconId, latlng, popup, options = list()){
     return(list(
+        iconId=iconId,
         pos=latlng,
         popup=popup,
         options=options
     ))
 }
 Leaflet.updateMarkers <- function(mapId, markers){
-    rpgm.sendToJavascript('leaflet/updateMarkers', list(mapId=mapId, markers=markers))
+    rpgm.sendToJavascript('leaflet/markers/update', list(mapId=mapId, markers=markers))
 }
 
 #### LEGEND ####
 Leaflet.updateLegend <- function(mapId, content){
-    rpgm.sendToJavascript('leaflet/updateLegend', list(mapId=mapId, content=content))
+    rpgm.sendToJavascript('leaflet/legend/update', list(mapId=mapId, content=content))
 }
 
 #### GEOJSON ####
 Leaflet.addGeoJSON <- function(mapId, zoneId, points, tooltip, color){
-    rpgm.sendToJavascript('leaflet/addGeoJSON', list(mapId=mapId, zoneId=zoneId, points=points, tooltip=tooltip, color=color))
+    rpgm.sendToJavascript('leaflet/geojson/add', list(mapId=mapId, zoneId=zoneId, points=points, tooltip=tooltip, color=color))
 }
 Leaflet.flushGeoJSON <- function(mapId){
-    rpgm.sendToJavascript('leaflet/flushGeoJSON', list(mapId=mapId))
+    rpgm.sendToJavascript('leaflet/geojson/flush', list(mapId=mapId))
 }

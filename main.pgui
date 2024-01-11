@@ -232,10 +232,10 @@
 					},
 					"elements": [
 						{
-							"id": "",
+							"id": "map",
 							"type": "label",
 							"data": {
-								"value": "<div id=\"map\"></div>",
+								"value": "",
 								"isr": false,
 								"css": "",
 								"margintop": "10",
