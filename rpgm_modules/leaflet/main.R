@@ -6,16 +6,17 @@ source(rpgm.pgmFilePath('rpgm_modules/leaflet/R/javascript.R'))
 source(rpgm.pgmFilePath('rpgm_modules/leaflet/R/utilities.R'))
 
 #### CREATION ####
-Leaflet.createMap <- function(mapId, step, widgetId, layerURL, height = 512, options = list(), layerOptions = list()){
-    gui.setValue(step, widget, paste0('<div id="leaflet-', mapId, '" style="height: ', height ,'px"></div>'))
+Leaflet.createMap <- function(mapId, step, widgetId, layer = layerURL, height = 512, options = list(), layerOptions = list()){
+    gui.setValue(step, widgetId, paste0('<div id="leaflet-', mapId, '" style="height: ', height ,'px"></div>'))
     .leaflet$maps[[mapId]] <- list(
         id=mapId,
         step=step,
-        layer=layerURL,
+        layer=layer,
         height=height,
         options=options,
         layerOptions=layerOptions,
         events=list(
+            didLoad=list(),
             didClickMap=list(),
             didChangeView=list()
         )
@@ -61,4 +62,12 @@ Leaflet.addGeoJSON <- function(mapId, zoneId, points, tooltip, color){
 }
 Leaflet.flushGeoJSON <- function(mapId){
     rpgm.sendToJavascript('leaflet/geojson/flush', list(mapId=mapId))
+}
+
+#### LOADING ####
+Leaflet.showLoading <- function(mapId){
+    rpgm.sendToJavascript('leaflet/loading/show', list(mapId=mapId))
+}
+Leaflet.hideLoading <- function(mapId){
+    rpgm.sendToJavascript('leaflet/loading/hide', list(mapId=mapId))
 }

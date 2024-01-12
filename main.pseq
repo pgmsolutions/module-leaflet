@@ -15,13 +15,13 @@
 			"id": "leaflet",
 			"name": "main",
 			"type": "gui",
-			"x": 340,
-			"y": 80,
+			"x": 280,
+			"y": 270,
 			"target": 3
 		},
 		{
-			"x": 340,
-			"y": 190,
+			"x": 500,
+			"y": 90,
 			"uuid": 3,
 			"file": "",
 			"id": "",
@@ -37,7 +37,7 @@
 			"type": "rscript",
 			"x": 60,
 			"y": 270,
-			"target": 2
+			"target": 7
 		},
 		{
 			"uuid": 5,
@@ -58,6 +58,16 @@
 			"x": 60,
 			"y": 110,
 			"target": 5
+		},
+		{
+			"uuid": 7,
+			"file": "map.R",
+			"id": "map.R",
+			"name": "map.R",
+			"type": "rscript",
+			"x": 280,
+			"y": 90,
+			"target": 2
 		}
 	]
 }

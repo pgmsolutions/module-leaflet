@@ -1,7 +1,18 @@
+function debug(output){
+    console.log(`[Leaflet] ${output}`);
+}
+
+function jsonToLatLng(obj){
+    if(typeof obj !== 'object' || !('lat' in obj) || !('lng' in obj) || typeof obj.lat !== 'number' || typeof obj.lng !== 'number'){
+        RPGM.newJavascriptError({message: 'Could not convert an object to a LatLng object!'});
+    }
+    return L.latLng(obj.lat, obj.lng);
+}
+
 /**
  * Manage all the maps in the app.
  */
-class MapManager {
+const LeafletMapManager = new class {
     constructor(){
         this._currentStepCache = null;
         this._maps = [];
@@ -14,14 +25,16 @@ class MapManager {
     initialize(){
         // Send R the current step
         RPGM.on('didEnterStep', (stepId)=>{
+            debug('Sending onDidEnterStep...');
             this._currentStepCache = stepId;
-            RPGM.sendMessage('r', 'leaflet/onDidEnterStep', {id: this._currentStepCache});
+            RPGM.sendMessage('r', 'leaflet/onDidEnterStep', {stepId: this._currentStepCache});
         });
 
         // When receiving a message
         RPGM.on('didReceiveMessage', (message, data)=>{
             if(message === 'leaflet/enterStep' && this._currentStepCache !== null){
-                RPGM.sendMessage('r', 'leaflet/onDidEnterStep', {id: this._currentStepCache});
+                debug('Force to send onDidEnterStep...');
+                RPGM.sendMessage('r', 'leaflet/onDidEnterStep', {stepId: this._currentStepCache});
                 return;
             }
             if(message === 'leaflet/icon/create'){
@@ -29,9 +42,10 @@ class MapManager {
                 return;
             }
             if(message === 'leaflet/initialize'){
+                debug('Initializing a new map...');
                 const mapInstance = new LeafletMap({
                     id: data.mapId,
-                    layerURL: data.layerURL,
+                    layer: data.layer,
                     height: data.height,
                     options: data.options,
                     layerOptions: data.layerOptions
@@ -67,6 +81,12 @@ class MapManager {
             else if(message === 'leaflet/geojson/flush'){
                 mapInstance.flushGeoJSON();
             }
+            else if(message === 'leaflet/loading/show'){
+                mapInstance.loadingShow();
+            }
+            else if(message === 'leaflet/loading/false'){
+                mapInstance.loadingHide();
+            }
         });
     }
 
@@ -74,7 +94,7 @@ class MapManager {
      * Return a map by its id or undefined if not found.
      */
     getMap(mapId){
-        return this._maps.find(m => m.id === mapId);
+        return this._maps.find(m => m.getId() === mapId);
     }
 
     /**
@@ -84,12 +104,15 @@ class MapManager {
         return this._icons.find(m => m.id === iconId);
     }
 }
+LeafletMapManager.initialize();
 
 /**
  * This class manages the leaflet map.
  */
-class Map {
+class LeafletMap {
     constructor(options){
+        this._id = options.id;
+
         /** All draw stuff */
         this._queueGeoJSON = [];
         this._lastGeoJSON = null;
@@ -100,15 +123,22 @@ class Map {
 
         /** JS binding */
         this.sendChange = this.sendChange.bind(this);
-        this.initializeMap = this.initializeMap.bind(this);
         this.onMapViewChange = this.onMapViewChange.bind(this);
         this.highlightFeature = this.highlightFeature.bind(this);
         this.resetHighlight = this.resetHighlight.bind(this);
         this.zoomToFeature = this.zoomToFeature.bind(this);
 
         // Create map
+        if(options.options.center){
+            options.options.center = jsonToLatLng(options.options.center);
+        }
         this._map = L.map(`leaflet-${options.id}`, options.options);
-        L.tileLayer(options.layerURL, options.layerOptions).addTo(this._map);
+        this._map.whenReady(()=>{
+            RPGM.sendMessage('r', 'leaflet/onDidLoad', {
+                id: this._id
+            });
+        });
+        L.tileLayer(options.layer, options.layerOptions).addTo(this._map);
 
         // Info popup
         this._tooltip = L.control();
@@ -139,10 +169,15 @@ class Map {
         // Use for debugging (to delete)
         this._map.on('click', (e)=>{
             RPGM.sendMessage('r', 'leaflet/onDidClickMap', {
+                id: this._id,
                 lat: e.latlng.lat,
                 lng: e.latlng.lng
             });
         });
+    }
+
+    getId(){
+        return this._id;
     }
 
     /**
@@ -161,6 +196,7 @@ class Map {
      */
     sendChange(){
         RPGM.sendMessage('r', 'leaflet/onDidChangeView', {
+            id: this._id,
             northLat: this._map.getBounds().getNorth(),
             eastLng: this._map.getBounds().getEast(),
             southLat: this._map.getBounds().getSouth(),
@@ -246,6 +282,7 @@ class Map {
 
     zoomToFeature(e){
         RPGM.sendMessage('r', 'onDidClickZone', {
+            id: this._id,
             zoneId: e.target.feature.properties.id
         });
     }
@@ -266,5 +303,13 @@ class Map {
             newMarker.addTo(this._map);
             this._markers.push(newMarker);
         });
+    }
+
+    loadingShow(){
+
+    }
+
+    loadingHide(){
+
     }
 }

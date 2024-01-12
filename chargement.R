@@ -1,32 +1,3 @@
-source(rpgm.pgmFilePath('rpgm_modules/leaflet/main.R'))
-
-# Initialize the map widget
-Leaflet.createMap(
-    'main',
-    rpgm.step('main', 'leaflet'),
-    'map',
-    'http://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png',
-    512,
-    list(),
-    list(
-        maxZoom=19,
-        attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    )
-)
-
-# Create the default icon
-file.copy(rpgm.pgmFilePath('rpgm_modules/leaflet/resources/icon.png'), rpgm.outputFile("leaflet_icon.png"));
-Leaflet.createIcon('default_icon', list(
-    iconUrl = rpgm.outputFileURL('leaflet_icon.png'),
-    iconSize = c(48, 48),
-    iconAnchor = c(24, 48),
-    popupAnchor = c(0, -48)
-));
-
-
-
-
-
 # R
 shape <- list()
 n_shape <- 6L
@@ -144,7 +115,7 @@ loadDonneesPrimes <- function(path, continue = 1L)
             if(z <= i)
             {
                 mapReady$Primes <<- i
-                rpgm.sendToJavascript('updateMap', list(empreinte = "Primes", lastShapeContinue = i+1L))
+                loadDonnees("Primes", path[["Primes"]], i+1L)
                 return(NULL)
             }
         }
@@ -214,7 +185,7 @@ loadDonneesVents <- function(path, continue = 1L)
             if(z <= i)
             {
                 mapReady$Ciaran <<- i
-                rpgm.sendToJavascript('updateMap', list(empreinte = "Ciaran", lastShapeContinue = i+1L))
+                loadDonnees("Ciaran", path[["Ciaran"]], i+1L)
                 return(NULL)
             }
         }
@@ -227,7 +198,6 @@ loadDonnees <- function(nom, path, continue = 1L)
     if(nom == "Primes")
         if(is.null(DonneesCartes[[nom]]) || mapReady[[nom]] < 6L)
         {
-            gui.setProperty("this", "loadRepeater", "intervalcode" ,"")
             loadDonneesPrimes(path, continue)
         }
         else

@@ -334,14 +334,6 @@
 			]
 		},
 		{
-			"id": "loadRepeater",
-			"type": "interval",
-			"data": {
-				"intervalcode": "loadDonnees(empreinte, path[[empreinte]]);",
-				"intervaltime": "200"
-			}
-		},
-		{
 			"id": "",
 			"type": "button",
 			"data": {
