@@ -57,8 +57,8 @@ Leaflet.updateLegend <- function(mapId, content){
 }
 
 #### GEOJSON ####
-Leaflet.addGeoJSON <- function(mapId, zoneId, points, tooltip, color){
-    rpgm.sendToJavascript('leaflet/geojson/add', list(mapId=mapId, zoneId=zoneId, points=points, tooltip=tooltip, color=color))
+Leaflet.addGeoJSON <- function(mapId, data){
+    rpgm.sendToJavascript('leaflet/geojson/add', list(mapId=mapId, zoneId=data$id, points=data$points, tooltip=data$tooltip, color=data$color))
 }
 Leaflet.flushGeoJSON <- function(mapId){
     rpgm.sendToJavascript('leaflet/geojson/flush', list(mapId=mapId))

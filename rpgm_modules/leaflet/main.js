@@ -25,7 +25,6 @@ const LeafletMapManager = new class {
     initialize(){
         // Send R the current step
         RPGM.on('didEnterStep', (stepId)=>{
-            debug('Sending onDidEnterStep...');
             this._currentStepCache = stepId;
             RPGM.sendMessage('r', 'leaflet/onDidEnterStep', {stepId: this._currentStepCache});
         });
@@ -33,7 +32,6 @@ const LeafletMapManager = new class {
         // When receiving a message
         RPGM.on('didReceiveMessage', (message, data)=>{
             if(message === 'leaflet/enterStep' && this._currentStepCache !== null){
-                debug('Force to send onDidEnterStep...');
                 RPGM.sendMessage('r', 'leaflet/onDidEnterStep', {stepId: this._currentStepCache});
                 return;
             }
@@ -42,14 +40,13 @@ const LeafletMapManager = new class {
                 return;
             }
             if(message === 'leaflet/initialize'){
-                debug('Initializing a new map...');
-                const mapInstance = new LeafletMap({
+                this._maps.push(new LeafletMap({
                     id: data.mapId,
                     layer: data.layer,
                     height: data.height,
                     options: data.options,
                     layerOptions: data.layerOptions
-                });
+                }));
                 return;
             }
 
@@ -79,6 +76,7 @@ const LeafletMapManager = new class {
                 mapInstance.addGeoJSON(data.zoneId, data.points, data.tooltip, data.color);
             }
             else if(message === 'leaflet/geojson/flush'){
+                console.log('flushing...');
                 mapInstance.flushGeoJSON();
             }
             else if(message === 'leaflet/loading/show'){
@@ -209,7 +207,7 @@ class LeafletMap {
         this._queueGeoJSON.push({points, id, tooltip, color});
     }
 
-    drawGeoJSON(geojson){
+    flushGeoJSON(geojson){
         if(this._lastGeoJSON){
             this._lastGeoJSON.remove();
         }
@@ -272,12 +270,12 @@ class LeafletMap {
             fillOpacity: 0.7
         });
         layer.bringToFront();
-        this._mapInfo.update(layer.feature.properties);
+        this._tooltip.update(layer.feature.properties);
     }
 
     resetHighlight(e){
         this._lastGeoJSON.resetStyle(e.target);
-        this._mapInfo.update();
+        this._tooltip.update();
     }
 
     zoomToFeature(e){

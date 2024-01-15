@@ -27,7 +27,7 @@ Leaflet.createIcon('default_icon', list(
 ));
 
 # Start loading data when the map is ready
-Leaflet.addEventListener('main', 'onDidLoad', function(){
+Leaflet.on('main', 'onDidLoad', function(){
     Leaflet.showLoading('main');
     loadDonnees("Primes", path[["Primes"]])
 });

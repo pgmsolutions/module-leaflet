@@ -7,7 +7,7 @@
 			"x": 60,
 			"y": 50,
 			"uuid": 1,
-			"target": 6
+			"target": 7
 		},
 		{
 			"uuid": 2,
@@ -15,13 +15,13 @@
 			"id": "leaflet",
 			"name": "main",
 			"type": "gui",
-			"x": 280,
-			"y": 270,
+			"x": 300,
+			"y": 260,
 			"target": 3
 		},
 		{
-			"x": 500,
-			"y": 90,
+			"x": 300,
+			"y": 370,
 			"uuid": 3,
 			"file": "",
 			"id": "",
@@ -36,8 +36,8 @@
 			"name": "main.R",
 			"type": "rscript",
 			"x": 60,
-			"y": 270,
-			"target": 7
+			"y": 410,
+			"target": 2
 		},
 		{
 			"uuid": 5,
@@ -46,7 +46,7 @@
 			"name": "chargement.R",
 			"type": "rscript",
 			"x": 60,
-			"y": 190,
+			"y": 310,
 			"target": 4
 		},
 		{
@@ -56,7 +56,7 @@
 			"name": "interpCol",
 			"type": "rscript",
 			"x": 60,
-			"y": 110,
+			"y": 190,
 			"target": 5
 		},
 		{
@@ -65,9 +65,9 @@
 			"id": "map.R",
 			"name": "map.R",
 			"type": "rscript",
-			"x": 280,
-			"y": 90,
-			"target": 2
+			"x": 300,
+			"y": 120,
+			"target": 6
 		}
 	]
 }

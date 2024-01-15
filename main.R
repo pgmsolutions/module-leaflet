@@ -76,82 +76,78 @@ plotly_graph <- function(data)
         }
 }
 
-rpgm.on('didReceiveMessage', function(message, data){
-    if(message == 'mapState'){
-        z <<- getLvlPolygonToDisplay(data$view$zoomLevel)
-        if(mapReady[[empreinte]] >= z && (is.null(lastView) || lastView$empreinte != empreinte || lastView$zoomLevel != data$view$zoomLevel || (data$view$northLat > lastView$northLat || data$view$southLat < lastView$southLat || data$view$eastLng > lastView$eastLng || data$view$westLng < lastView$westLng)))
+Leaflet.on('main', 'onDidChangeView', function(data){
+    z <<- getLvlPolygonToDisplay(data$zoomLevel)
+    if(mapReady[[empreinte]] >= z && (is.null(lastView) || lastView$empreinte != empreinte || lastView$zoomLevel != data$zoomLevel || (data$northLat > lastView$northLat || data$southLat < lastView$southLat || data$eastLng > lastView$eastLng || data$westLng < lastView$westLng)))
+    {
+        total <- 0
+
+        lengthLat <- data$northLat - data$southLat
+        lengthLng <- data$eastLng - data$westLng
+        data[c('northLat', 'southLat', 'eastLng', 'westLng')] <- as.list(c(data$northLat, data$southLat, data$eastLng, data$westLng) + 0.4*c(lengthLat, - lengthLat, lengthLng, - lengthLng))
+
+        lastView <<- data[c('northLat', 'southLat', 'eastLng', 'westLng', 'zoomLevel')]
+        lastView$empreinte <<- empreinte
+
+        for(i in 1:length(shape[[z]]$geometry))
         {
-            total <- 0
-
-            lengthLat <- data$view$northLat - data$view$southLat
-            lengthLng <- data$view$eastLng - data$view$westLng
-            data$view[c('northLat', 'southLat', 'eastLng', 'westLng')] <- as.list(c(data$view$northLat, data$view$southLat, data$view$eastLng, data$view$westLng) + 0.4*c(lengthLat, - lengthLat, lengthLng, - lengthLng))
-
-            lastView <<- data$view[c('northLat', 'southLat', 'eastLng', 'westLng', 'zoomLevel')]
-            lastView$empreinte <<- empreinte
-
-            for(i in 1:length(shape[[z]]$geometry))
+            P <- list()
+            l <- 1
+            for(j in 1:length(shape[[z]]$geometry[[i]]))
             {
-                P <- list()
-                l <- 1
-                for(j in 1:length(shape[[z]]$geometry[[i]]))
+                for(k in 1:length(shape[[z]]$geometry[[i]][[j]]))
                 {
-                    for(k in 1:length(shape[[z]]$geometry[[i]][[j]]))
+                    Z <- shape[[z]]$geometry[[i]][[j]][[k]]
+                    if(nrow(Z) > 1 && doDisplayPolygon(Z, data))
                     {
-                        Z <- shape[[z]]$geometry[[i]][[j]][[k]]
-                        if(nrow(Z) > 1 && doDisplayPolygon(Z, data$view))
-                        {
-                            P[[l]] <- formatPolygonForLeaflet(Z)
-                            l <- l+1
-                        }
+                        P[[l]] <- formatPolygonForLeaflet(Z)
+                        l <- l+1
                     }
                 }
-                if(l > 1)
-                {
-                    if(empreinte == "Primes")
-                        Leaflet.addGeoJSON('main', list(points=P, id=i, tooltip=leafletTooltipDonnees(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], list(Primes = list(value = DonneesCartes[[empreinte]]$valeurs[[z]][i], unit = DonneesCartes[[empreinte]]$unite))), color=DonneesCartes[[empreinte]]$couleurs[[z]][i]))
-                    else if(empreinte == "Ciaran")
-                        Leaflet.addGeoJSON('main', list(points=P, id=i, tooltip=leafletTooltipDonnees(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], list(Primes = list(value = DonneesCartes[["Primes"]]$valeurs[[z]][i], unit = "€"), Vents = list(value = DonneesCartes[[empreinte]]$valeurs[[z]][i], unit = DonneesCartes[[empreinte]]$unite))), color=DonneesCartes[[empreinte]]$couleurs[[z]][i]))
-                    total <- total+1
-                }
             }
-            
-            # Erase previous drawings and draw all polygons addded in queue
-            Leaflet.flushGeoJSON()
-            Leaflet.updateLegend('main', getLegend(lapply(seq_len(length(DonneesCartes[[empreinte]]$legendes[[z]]$couleurs)), function(k) list(color = DonneesCartes[[empreinte]]$legendes[[z]]$couleurs[k], label = DonneesCartes[[empreinte]]$legendes[[z]]$labels[k])), DonneesCartes[[empreinte]]$unite))
-            # Markers
-            if(empreinte == "Primes")
-                donnees_loc <- Donnees[[empreinte]][Donnees[[empreinte]]$lat < data$view$northLat & Donnees[[empreinte]]$lat > data$view$southLat & Donnees[[empreinte]]$lng < data$view$eastLng & Donnees[[empreinte]]$lng > data$view$westLng, ]
-            if(empreinte == "Primes" && nrow(donnees_loc) <= 500L)
+            if(l > 1)
             {
                 if(empreinte == "Primes")
-                    D <- lapply(seq_len(nrow(donnees_loc)), function(k) list(lat = donnees_loc$lat[k], lng = donnees_loc$lng[k], label = paste0(empreinte, " : <strong>", donnees_loc$prime_ttc[k], DonneesCartes[[empreinte]]$unite, "</strong>.")))
+                    Leaflet.addGeoJSON('main', list(points=P, id=i, tooltip=leafletTooltipDonnees(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], list(Primes = list(value = DonneesCartes[[empreinte]]$valeurs[[z]][i], unit = DonneesCartes[[empreinte]]$unite))), color=DonneesCartes[[empreinte]]$couleurs[[z]][i]))
                 else if(empreinte == "Ciaran")
-                    D <- lapply(seq_len(nrow(donnees_loc)), function(k) list(lat = donnees_loc$lat[k], lng = donnees_loc$lng[k], label = paste0(empreinte, " : <strong>", donnees_loc$rafales[k], DonneesCartes[[empreinte]]$unite, "</strong>.")))
-                Leaflet.updateMarkers('main', D)
-            }
-            else
-            {
-                Leaflet.updateMarkers('main', list())
+                    Leaflet.addGeoJSON('main', list(points=P, id=i, tooltip=leafletTooltipDonnees(shape[[z]]$COUNTRY[i], shape[[z]]$NAME_1[i], shape[[z]]$NAME_2[i], shape[[z]]$NAME_3[i], shape[[z]]$NAME_4[i], shape[[z]]$NAME_5[i], list(Primes = list(value = DonneesCartes[["Primes"]]$valeurs[[z]][i], unit = "€"), Vents = list(value = DonneesCartes[[empreinte]]$valeurs[[z]][i], unit = DonneesCartes[[empreinte]]$unite))), color=DonneesCartes[[empreinte]]$couleurs[[z]][i]))
+                total <- total+1
             }
         }
+        
+        # Erase previous drawings and draw all polygons added in queue
+        Leaflet.flushGeoJSON('main')
+        Leaflet.updateLegend('main', getLegend(lapply(seq_len(length(DonneesCartes[[empreinte]]$legendes[[z]]$couleurs)), function(k) list(color = DonneesCartes[[empreinte]]$legendes[[z]]$couleurs[k], label = DonneesCartes[[empreinte]]$legendes[[z]]$labels[k])), DonneesCartes[[empreinte]]$unite))
+        
+        # Markers
+        if(empreinte == "Primes"){
+            donnees_loc <- Donnees[[empreinte]][Donnees[[empreinte]]$lat < data$northLat & Donnees[[empreinte]]$lat > data$southLat & Donnees[[empreinte]]$lng < data$eastLng & Donnees[[empreinte]]$lng > data$westLng, ]
+        }
+        
+        if(empreinte == "Primes" && nrow(donnees_loc) <= 500L){
+            if(empreinte == "Primes"){
+                D <- lapply(seq_len(nrow(donnees_loc)), function(k) list(lat = donnees_loc$lat[k], lng = donnees_loc$lng[k], label = paste0(empreinte, " : <strong>", donnees_loc$prime_ttc[k], DonneesCartes[[empreinte]]$unite, "</strong>.")))
+            }
+            else if(empreinte == "Ciaran"){
+                D <- lapply(seq_len(nrow(donnees_loc)), function(k) list(lat = donnees_loc$lat[k], lng = donnees_loc$lng[k], label = paste0(empreinte, " : <strong>", donnees_loc$rafales[k], DonneesCartes[[empreinte]]$unite, "</strong>.")))
+            }
+            #Leaflet.updateMarkers('main', D)
+        }
+        else {
+            #Leaflet.updateMarkers('main', list())
+        }
     }
-    else if(message == 'mapClick'){
-        #print(paste0('User clicked on lat: ',data$coordinates$lat, 'and lng: ', data$coordinates$lng));
-    }
-    else if(message == 'zoneClick'){
-        plotly_graph(data)
-   }
-   else if(message == 'loadDonneesContinue'){
-        loadDonnees(data$empreinte, path[[data$empreinte]], data$lastShapeContinue)
-   }
+    # else if(message == 'zoneClick'){
+    #     plotly_graph(data)
+    # }
 });
 
+# Generate the HTML of the legend of the map.
 getLegend <- function(info, unite)
 {
     result <- paste0('Légende (', unite, ') <br>');
-    for(i in info)
-        result <- paste0(result, '<i style="background:', i$color, '"></i> ', i$label, '<br>')
-
+    for(i in info){
+        result <- paste0(result, '<div><i style="background:', i$color, '"></i> ', i$label, '</div>')
+    }
     return(result);
 }

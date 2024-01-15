@@ -4,7 +4,7 @@
 			"id": "",
 			"type": "label",
 			"data": {
-				"value": "<a href=\"https//scor.com\" class=\"pgm-button pgm-button-primary pgm-button-lg\" style=\"text-decoration: none\">SCOR.com</a>",
+				"value": "Leaflet module testcase",
 				"isr": false,
 				"css": "",
 				"margintop": "10",
@@ -12,9 +12,9 @@
 				"labelposition": "left",
 				"helptext": "",
 				"helpposition": "bottom",
-				"fontsize": "14",
-				"fontfamily": "default",
-				"fontcolor": "#000000"
+				"fontsize": "30",
+				"fontfamily": "arial",
+				"fontcolor": "#ffffff"
 			}
 		},
 		{
@@ -332,23 +332,6 @@
 					]
 				}
 			]
-		},
-		{
-			"id": "",
-			"type": "button",
-			"data": {
-				"value": "test",
-				"isr": false,
-				"css": "",
-				"margintop": "10",
-				"labeltext": "",
-				"labelposition": "left",
-				"helptext": "",
-				"helpposition": "bottom",
-				"onpress": "rpgm.open(\"http://scor.com\")",
-				"buttonsize": "md",
-				"buttondesign": "primary"
-			}
 		}
 	],
 	"submitbutton": false,

@@ -14,7 +14,6 @@ rpgm.on('didReceiveMessage', function(message, data){
         }
     }
     else if(message == 'leaflet/onDidLoad'){
-        cat(paste0("\n\nreceived onDidLoad from ", data$id, "...\n\n"))
         .leaflet$emit(data$id, 'onDidLoad', data)
     }
     else if(message == 'leaflet/onDidClickMap'){
@@ -27,5 +26,6 @@ rpgm.on('didReceiveMessage', function(message, data){
     }
     else if(message == 'leaflet/onDidChangeView'){
         # northLat, eastLng, southLat, westLng, zoomLevel
+        .leaflet$emit(data$id, 'onDidChangeView', list(data=data))
     }
 })

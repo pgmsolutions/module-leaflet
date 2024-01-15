@@ -8,7 +8,7 @@
     }
 }
 
-Leaflet.addEventListener <- function(mapId, event, callback){
+Leaflet.on <- function(mapId, event, callback){
     for(map in .leaflet$maps){
         if(map$id == mapId){
             .leaflet$maps[[map$id]]$events[[event]] <- append(map$events[[event]], callback);
@@ -16,7 +16,7 @@ Leaflet.addEventListener <- function(mapId, event, callback){
     }
 }
 
-Leaflet.removeEventListener <- function(mapId, event, callback){
+Leaflet.off <- function(mapId, event, callback){
     for(map in .leaflet$maps){
         if(map$id == mapId){
            .leaflet$maps[[map$id]]$events[[event]] <- map$events[[event]][map$events[[event]] != callback];
