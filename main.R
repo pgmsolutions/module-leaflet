@@ -4,11 +4,11 @@ doDisplayPolygon <- function(Z, view)
     return(Z_range$lat[1] < view$northLat && Z_range$lat[2] > view$southLat && Z_range$lng[1] < view$eastLng && Z_range$lng[2] > view$westLng)
 }
 
-formatPolygonForLeaflet <- function(Z)
+formatPolygonForLeaflet <- function(Z){
     return(lapply(seq_len(nrow(Z)), function(k) list(Z[k, 1], Z[k, 2])))
+}
 
-
-leafletTooltipGeo <- function(pays, region, dpt, canton, insee, commune)
+leafletTooltipGeo <- function(pays, region, dpt, canton, insee, commune){
     return(paste0(
         "Pays : <strong>", pays, "</strong>",
         `if`(is.null(region), "", paste0("<br>Région : <strong>", region, "</strong>")),
@@ -16,14 +16,14 @@ leafletTooltipGeo <- function(pays, region, dpt, canton, insee, commune)
         `if`(is.null(canton), "", paste0("<br>Canton : <strong>", canton, "</strong>")),
         `if`(is.null(insee), "", paste0("<br>Insee : <strong>", insee, "</strong>")),
         `if`(is.null(commune), "", paste0("<br>Commune : <strong>", commune, "</strong>"))
-    ))
+    ));
+}
 
-
-leafletTooltipDonnees <- function(pays, region, dpt, canton, insee, commune, donnees)
-{
+leafletTooltipDonnees <- function(pays, region, dpt, canton, insee, commune, donnees){
     tooltip <- leafletTooltipGeo(pays, region, dpt, canton, insee, commune)
-    for(i in 1:length(donnees))
+    for(i in 1:length(donnees)){
         tooltip <- paste0(tooltip, `if`(i == 1, "<br>", ""), "<br>", names(donnees)[i], " : <strong>", format(round(donnees[[i]]$value), big.mark = " "), donnees[[i]]$unit, "</strong>.")
+    }
     return(tooltip)
 }
 
@@ -86,7 +86,7 @@ getLegend <- function(info, unite)
 
 # Set the default view and zoom of the leaflet map
 setDefaultView <- function(){
-    Leaflet.setView('main', Leaflet.Latlng(48, 2));
+    Leaflet.setView('main', Leaflet.latLng(48, 2));
     Leaflet.setZoom('main', 5);
 }
 
@@ -141,15 +141,15 @@ onDidChangeView <- function(data){
         
         if(empreinte == "Primes" && nrow(donnees_loc) <= 500L){
             if(empreinte == "Primes"){
-                D <- lapply(seq_len(nrow(donnees_loc)), function(k) list(lat = donnees_loc$lat[k], lng = donnees_loc$lng[k], label = paste0(empreinte, " : <strong>", donnees_loc$prime_ttc[k], DonneesCartes[[empreinte]]$unite, "</strong>.")))
+                D <- lapply(seq_len(nrow(donnees_loc)), function(k) Leaflet.marker('default', Leaflet.latLng(donnees_loc$lat[k], donnees_loc$lng[k]), paste0(empreinte, " : <strong>", donnees_loc$prime_ttc[k], DonneesCartes[[empreinte]]$unite, "</strong>.")))
             }
             else if(empreinte == "Ciaran"){
-                D <- lapply(seq_len(nrow(donnees_loc)), function(k) list(lat = donnees_loc$lat[k], lng = donnees_loc$lng[k], label = paste0(empreinte, " : <strong>", donnees_loc$rafales[k], DonneesCartes[[empreinte]]$unite, "</strong>.")))
+                D <- lapply(seq_len(nrow(donnees_loc)), function(k) Leaflet.marker('default', Leaflet.latLng(donnees_loc$lat[k], donnees_loc$lng[k]), paste0(empreinte, " : <strong>", donnees_loc$rafales[k], DonneesCartes[[empreinte]]$unite, "</strong>.")))
             }
-            #Leaflet.updateMarkers('main', D)
+            Leaflet.updateMarkers('main', D)
         }
         else {
-            #Leaflet.updateMarkers('main', list())
+            Leaflet.updateMarkers('main', list())
         }
     }
 }

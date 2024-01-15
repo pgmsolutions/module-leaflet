@@ -31,10 +31,6 @@ const LeafletMapManager = new class {
                 RPGM.sendMessage('r', 'leaflet/onDidEnterStep', {stepId: this._currentStepCache});
                 return;
             }
-            if(message === 'leaflet/icon/create'){
-                this._icons[data.iconId] = L.icon(data.options);
-                return;
-            }
             if(message === 'leaflet/initialize'){
                 this._maps.push(new LeafletMap({
                     id: data.mapId,
@@ -43,6 +39,14 @@ const LeafletMapManager = new class {
                     options: data.options,
                     layerOptions: data.layerOptions
                 }));
+
+                // Icons, only one time
+                if(this._icons.length === 0){
+                    for(let iconId in data.icons){
+                        this._icons.push({id: iconId, icon: L.icon(data.icons[iconId])});
+                    }
+                }
+
                 return;
             }
 
@@ -293,8 +297,8 @@ class LeafletMap {
         this._markers.map(m => m.remove());
         this._markers = [];
         markers.forEach(m => {
-            const newMarker = L.marker([m.lat, m.lng], {icon: this._markerIcon});
-            newMarker.bindPopup(m.label);
+            const newMarker = L.marker([m.pos.lat, m.pos.lng], {icon: LeafletMapManager.getIcon(m.iconId).icon});
+            newMarker.bindPopup(m.popup);
             newMarker.on('mouseover',function(ev){
                 newMarker.openPopup();
             });

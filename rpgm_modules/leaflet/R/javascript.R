@@ -8,7 +8,8 @@ rpgm.on('didReceiveMessage', function(message, data){
                     layer=map$layer,
                     height=map$height,
                     options=map$options,
-                    layerOptions=map$layerOptions
+                    layerOptions=map$layerOptions,
+                    icons=.leaflet$icons
                 ))
             }
         }

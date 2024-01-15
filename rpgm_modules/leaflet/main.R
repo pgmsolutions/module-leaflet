@@ -4,6 +4,7 @@
 source(rpgm.pgmFilePath('rpgm_modules/leaflet/R/events.R'))
 source(rpgm.pgmFilePath('rpgm_modules/leaflet/R/javascript.R'))
 source(rpgm.pgmFilePath('rpgm_modules/leaflet/R/utilities.R'))
+source(rpgm.pgmFilePath('rpgm_modules/leaflet/R/icons.R'))
 
 #### CREATION ####
 Leaflet.createMap <- function(mapId, step, widgetId, layer = layerURL, height = 512, options = list(), layerOptions = list()){
@@ -36,9 +37,6 @@ Leaflet.fitBounds <- function(mapId, bounds){
 }
 
 #### MARKERS & ICONS ####
-Leaflet.createIcon <- function(iconId, options){
-    rpgm.sendToJavascript('leaflet/icon/create', list(iconId=iconId, options=options))
-}
 Leaflet.marker <- function(iconId, latlng, popup, options = list()){
     return(list(
         iconId=iconId,

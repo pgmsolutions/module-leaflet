@@ -8,7 +8,7 @@ Leaflet.createMap(
     layer = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
     height = 512,
     options = list(
-        center=Leaflet.Latlng(48, 2),
+        center=Leaflet.latLng(48, 2),
         zoom=5
     ),
     layerOptions = list(
@@ -19,8 +19,9 @@ Leaflet.createMap(
 
 # Create the default icon
 file.copy(rpgm.pgmFilePath('rpgm_modules/leaflet/resources/icon.png'), rpgm.outputFile("leaflet_icon.png"));
-Leaflet.createIcon('default_icon', list(
-    iconUrl = rpgm.outputFileURL('leaflet_icon.png'),
+leafletIconPath <- if(rpgm.isServer()) rpgm.outputFileURL('leaflet_icon.png') else rpgm.outputFile('leaflet_icon.png')
+Leaflet.createIcon('default', list(
+    iconUrl = leafletIconPath,
     iconSize = c(48, 48),
     iconAnchor = c(24, 48),
     popupAnchor = c(0, -48)

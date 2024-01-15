@@ -29,7 +29,7 @@ Leaflet.setView(mapId, center, zoom)
 
 Set the view of the map to a specific point and zoom.
 
-- `center` is a LatLng point created with `Leaflet.LatLng()`;
+- `center` is a LatLng point created with `Leaflet.latLng()`;
 - `zoom` is the wanted zoom level.
 
 ### Leaflet.setZoom
@@ -37,6 +37,8 @@ Set the view of the map to a specific point and zoom.
 ```r
 Leaflet.setZoom(mapId, zoom)
 ```
+
+Set the zoom level of the map.
 
 ### Leaflet.fitBounds
 
@@ -46,7 +48,7 @@ Leaflet.fitBounds(mapId, bounds)
 
 Show a specific view on the map.
 
-- `bounds`
+- `bounds` is a LatLngBounds created with `Leaflet.latLngBounds()`
 
 ### Leaflet.createIcon
 
@@ -54,7 +56,7 @@ Show a specific view on the map.
 Leaflet.createIcon(iconId, options)
 ```
 
-Create a new icon for future markers.
+Create a new icon for future markers. Icon should be created before initializing the map.
 
 - `iconId` is a unique id;
 - `options` is a list of [Leaflet icon options](https://leafletjs.com/reference.html#icon).
@@ -68,7 +70,7 @@ Leaflet.marker(iconId, latlng, popup, options = list())
 Create a new marker to be used with `Leaflet.updateMarkers()`.
 
 - `iconId` is the id of an icon created with `Leaflet.createIcon()`;
-- `latlng` is the position of the marker created with `Leaflet.LatLng()`;
+- `latlng` is the position of the marker created with `Leaflet.latLng()`;
 - `popup` is the HTML content of the popup when the user click on the marker;
 - `options` is a list of [Leaflet marker options](https://leafletjs.com/reference.html#marker-option).
 
@@ -130,18 +132,18 @@ Leaflet.hideLoading(mapId)
 
 Hide the loading state of a map.
 
-### Leaflet.Latlng
+### Leaflet.latlng
 
 ```r
-Leaflet.Latlng(lat, lng)
+Leaflet.latlng(lat, lng)
 ```
 
 Create a new LatLng object to use where [Leaflet LatLng object](https://leafletjs.com/reference.html#latlng) are used.
 
-### Leaflet.LatLngBounds
+### Leaflet.latLngBounds
 
 ```r
-Leaflet.LatLngBounds(corner1, corner2)
+Leaflet.latLngBounds(corner1, corner2)
 ```
 
 Create a new LatLng object to use where [Leaflet LatLngBounds object](https://leafletjs.com/reference.html#latlngbounds) are used.
