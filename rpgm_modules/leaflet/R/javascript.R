@@ -14,15 +14,16 @@ rpgm.on('didReceiveMessage', function(message, data){
         }
     }
     else if(message == 'leaflet/onDidLoad'){
-        .leaflet$emit(data$id, 'onDidLoad', data)
+        # No extra data
+        .leaflet$emit(data$id, 'onDidLoad', list())
     }
     else if(message == 'leaflet/onDidClickMap'){
-        # data$lat, data#lng
-
+        # lat, lng
+        .leaflet$emit(data$id, 'onDidClickMap', list(data=data))
     }
     else if(message == 'leaflet/onDidClickZone'){
-        # data$zoneId
-
+        # zoneId, northLat, eastLng, southLat, westLng, zoomLevel
+        .leaflet$emit(data$id, 'onDidClickZone', list(data=data))
     }
     else if(message == 'leaflet/onDidChangeView'){
         # northLat, eastLng, southLat, westLng, zoomLevel

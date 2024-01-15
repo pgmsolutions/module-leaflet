@@ -1,8 +1,3 @@
-setDefaultView <- function(){
-    Leaflet.setView('main', Leaflet.Latlng(48, 2));
-    Leaflet.setZoom('main', 5);
-}
-
 doDisplayPolygon <- function(Z, view)
 {
     Z_range <- list(lng = range(Z[, 1]), lat = range(Z[, 2]))
@@ -32,7 +27,7 @@ leafletTooltipDonnees <- function(pays, region, dpt, canton, insee, commune, don
     return(tooltip)
 }
 
-plotlyTitle <- function(pays, region, dpt, canton, insee, commune, primes)
+plotlyTitle <- function(pays, region, dpt, canton, insee, commune, primes){
     return(paste0(
         "<b>", pays, "</b>",
         `if`(is.null(region), "", paste0(", <b>", region, "</b>")),
@@ -42,41 +37,61 @@ plotlyTitle <- function(pays, region, dpt, canton, insee, commune, primes)
         `if`(is.null(commune), "", paste0(", <b>", commune, "</b>")),
         `if`(is.null(primes), "", paste0("<br>Primes : <b>", format(round(primes), big.mark = " "), "€</b>"))
     ))
-
-plotly_graph <- function(data)
-{
-        z <- getLvlPolygonToDisplay(data$zoomLevel)
-        selected_shape <- shape[[z]][data$id, ]
-        assures <- Donnees[["Primes"]][t(sf::st_contains(selected_shape, donnees_points_sf, sparse = FALSE)), ]
-
-        #layout commun
-        layout = list(
-            title = plotlyTitle(selected_shape$COUNTRY, selected_shape$NAME_1, selected_shape$NAME_2, selected_shape$NAME_3, selected_shape$NAME_4, selected_shape$NAME_5, DonneesCartes[["Primes"]]$valeurs[[z]][as.integer(data$id)]),
-            font = list(
-                color = '#ecf0f1'
-            ),
-            plot_bgcolor = '#2e3134',
-            paper_bgcolor = '#2e3134'
-        )
-
-        #graphiques 
-        for(var in paste0("var_", 1:3))
-        {
-            donnees_plotly <- table(assures[[var]])
-            data_plotly = list(
-                values= as.list(as.vector(donnees_plotly)),
-                labels= as.list(names(donnees_plotly)),
-                type= 'pie',
-                marker = list(
-                    colors = c('#3498db', '#c0392b')
-                )
-            )
-            gui.setValue('this', var, list(data = data_plotly, layout = layout))
-            gui.show('this', var)
-        }
 }
 
-Leaflet.on('main', 'onDidChangeView', function(data){
+# Show the corresponding plotly graph of the clicked zone on the map 
+showPlotlyGraph <- function(data){
+    z <- getLvlPolygonToDisplay(data$zoomLevel)
+    selected_shape <- shape[[z]][data$zoneId, ]
+    assures <- Donnees[["Primes"]][t(sf::st_contains(selected_shape, donnees_points_sf, sparse = FALSE)), ]
+
+    # Layout commun
+    layout = list(
+        title = plotlyTitle(selected_shape$COUNTRY, selected_shape$NAME_1, selected_shape$NAME_2, selected_shape$NAME_3, selected_shape$NAME_4, selected_shape$NAME_5, DonneesCartes[["Primes"]]$valeurs[[z]][as.integer(data$zoneId)]),
+        font = list(
+            color = '#ecf0f1'
+        ),
+        plot_bgcolor = '#2e3134',
+        paper_bgcolor = '#2e3134'
+    )
+
+    # Graphics
+    for(var in paste0("var_", 1:3)){
+        donnees_plotly <- table(assures[[var]])
+        data_plotly = list(
+            values= as.list(as.vector(donnees_plotly)),
+            labels= as.list(names(donnees_plotly)),
+            type= 'pie',
+            marker = list(
+                colors = c('#3498db', '#c0392b')
+            )
+        )
+        gui.setValue('this', var, list(data = data_plotly, layout = layout))
+        gui.show('this', var)
+    }
+}
+
+# Set the hook to the onDidClickZone function
+Leaflet.on('main', 'onDidClickZone', showPlotlyGraph);
+
+# Generate the HTML of the legend of the map.
+getLegend <- function(info, unite)
+{
+    result <- paste0('Légende (', unite, ') <br>');
+    for(i in info){
+        result <- paste0(result, '<div><i style="background:', i$color, '"></i> ', i$label, '</div>')
+    }
+    return(result);
+}
+
+# Set the default view and zoom of the leaflet map
+setDefaultView <- function(){
+    Leaflet.setView('main', Leaflet.Latlng(48, 2));
+    Leaflet.setZoom('main', 5);
+}
+
+# Called when the end-user changes the view of the leaflet map
+onDidChangeView <- function(data){
     z <<- getLvlPolygonToDisplay(data$zoomLevel)
     if(mapReady[[empreinte]] >= z && (is.null(lastView) || lastView$empreinte != empreinte || lastView$zoomLevel != data$zoomLevel || (data$northLat > lastView$northLat || data$southLat < lastView$southLat || data$eastLng > lastView$eastLng || data$westLng < lastView$westLng)))
     {
@@ -137,17 +152,7 @@ Leaflet.on('main', 'onDidChangeView', function(data){
             #Leaflet.updateMarkers('main', list())
         }
     }
-    # else if(message == 'zoneClick'){
-    #     plotly_graph(data)
-    # }
-});
-
-# Generate the HTML of the legend of the map.
-getLegend <- function(info, unite)
-{
-    result <- paste0('Légende (', unite, ') <br>');
-    for(i in info){
-        result <- paste0(result, '<div><i style="background:', i$color, '"></i> ', i$label, '</div>')
-    }
-    return(result);
 }
+
+# Set the hook to the onDidChangeView function
+Leaflet.on('main', 'onDidChangeView', onDidChangeView);

@@ -1,7 +1,3 @@
-function debug(output){
-    console.log(`[Leaflet] ${output}`);
-}
-
 function jsonToLatLng(obj){
     if(typeof obj !== 'object' || !('lat' in obj) || !('lng' in obj) || typeof obj.lat !== 'number' || typeof obj.lng !== 'number'){
         RPGM.newJavascriptError({message: 'Could not convert an object to a LatLng object!'});
@@ -76,7 +72,6 @@ const LeafletMapManager = new class {
                 mapInstance.addGeoJSON(data.zoneId, data.points, data.tooltip, data.color);
             }
             else if(message === 'leaflet/geojson/flush'){
-                console.log('flushing...');
                 mapInstance.flushGeoJSON();
             }
             else if(message === 'leaflet/loading/show'){
@@ -279,9 +274,14 @@ class LeafletMap {
     }
 
     zoomToFeature(e){
-        RPGM.sendMessage('r', 'onDidClickZone', {
+        RPGM.sendMessage('r', 'leaflet/onDidClickZone', {
             id: this._id,
-            zoneId: e.target.feature.properties.id
+            zoneId: e.target.feature.properties.id,
+            northLat: this._map.getBounds().getNorth(),
+            eastLng: this._map.getBounds().getEast(),
+            southLat: this._map.getBounds().getSouth(),
+            westLng: this._map.getBounds().getWest(),
+            zoomLevel: this._map.getZoom()
         });
     }
 
