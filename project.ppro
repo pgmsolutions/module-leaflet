@@ -38,9 +38,9 @@
 	"created": "2023-09-21T09:45:25+02:00",
 	"version": "4.6.0",
 	"customFiles": [
-		"rpgm_modules/leaflet/resources/leaflet.js",
-		"rpgm_modules/leaflet/resources/leaflet.css",
-		"rpgm_modules/leaflet/main.css",
-		"rpgm_modules/leaflet/main.js"
+		"modules/leaflet/resources/leaflet.js",
+		"modules/leaflet/resources/leaflet.css",
+		"modules/leaflet/main.css",
+		"modules/leaflet/main.js"
 	]
 }

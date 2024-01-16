@@ -1,10 +1,10 @@
 .leaflet <- new.env(parent=emptyenv())
 .leaflet$maps <- list()
 
-source(rpgm.pgmFilePath('rpgm_modules/leaflet/R/events.R'))
-source(rpgm.pgmFilePath('rpgm_modules/leaflet/R/javascript.R'))
-source(rpgm.pgmFilePath('rpgm_modules/leaflet/R/utilities.R'))
-source(rpgm.pgmFilePath('rpgm_modules/leaflet/R/icons.R'))
+source(rpgm.pgmFilePath('modules/leaflet/R/events.R'))
+source(rpgm.pgmFilePath('modules/leaflet/R/javascript.R'))
+source(rpgm.pgmFilePath('modules/leaflet/R/utilities.R'))
+source(rpgm.pgmFilePath('modules/leaflet/R/icons.R'))
 
 #### CREATION ####
 Leaflet.createMap <- function(mapId, step, widgetId, layer = layerURL, height = 512, options = list(), layerOptions = list()){

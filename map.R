@@ -1,4 +1,4 @@
-source(rpgm.pgmFilePath('rpgm_modules/leaflet/main.R'))
+source(rpgm.pgmFilePath('modules/leaflet/main.R'))
 
 # Initialize the map widget
 Leaflet.createMap(
@@ -18,7 +18,7 @@ Leaflet.createMap(
 )
 
 # Create the default icon
-file.copy(rpgm.pgmFilePath('rpgm_modules/leaflet/resources/icon.png'), rpgm.outputFile("leaflet_icon.png"));
+file.copy(rpgm.pgmFilePath('modules/leaflet/resources/icon.png'), rpgm.outputFile("leaflet_icon.png"));
 leafletIconPath <- if(rpgm.isServer()) rpgm.outputFileURL('leaflet_icon.png') else rpgm.outputFile('leaflet_icon.png')
 Leaflet.createIcon('default', list(
     iconUrl = leafletIconPath,
