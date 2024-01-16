@@ -1,13 +1,120 @@
+# Leaflet module
+
+R RPGM module for controlling a Leaflet map in a GUI.
+
+## Table of Contents
+
+1. [Installation](#installation)
+2. [Usage](#usage)
+3. [Methods](#methods)
+    1. [.addGeoJSON()](#leaflet.addgeojson)
+    2. [.createIcon()](#leaflet.createicon)
+    3. [.createMap()](#leaflet.createmap)
+    4. [.fitBounds()](#leaflet.fitbounds)
+    5. [.flushGeoJSON()](#leaflet.flushgeojson)
+    6. [.hideLoading()](#leaflet.hideloading)
+    7. [.latLng()](#leaflet.latlng)
+    8. [.latLngBounds()](#leaflet.latlngbounds)
+    9. [.marker()](#leaflet.marker)
+    10. [.on()](#leaflet.on)
+    11. [.off()](#leaflet.off)
+    12. [.setView()](#leaflet.setview)
+    13. [.setZoom()](#leaflet.setzoom)
+    14. [.showLoading()](#leaflet.showloading)
+    15. [.updateLegends()](#leaflet.updatelegend)
+    15. [.updateMarkers()](#leaflet.updatemarkers)
+4. [Events](#events)
+    1. [onDidChangeView](#ondidchangeview)
+    2. [onDidClickMap](#ondidclickmap)
+    3. [onDidClickZone](#ondidclickzone)
+    4. [onDidLoad](#ondidload)
+
+## Installation
+
+To install the module, copy and paste the `leaflet` folder in a `modules` subfolder in your project.
+You should have a `modules/leaflet/README.md` file.
 
 ## Usage
 
-```r
+First, create a new label widget in a GUI and give it a unique id, like `myMap`. Then create a new R file, add it to the sequencer
+before the GUI, and source the module:
 
+```r
+source(rpgm.pgmFilePath('rpgm_modules/leaflet/main.R'))
+```
+
+You can then initialize the map. This must be done before entering the GUI with the map.
+
+```r
+Leaflet.createMap(
+    'myMapId',
+    rpgm.step('main', 'myGUI'),
+    'myMap',
+    layer = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    height = 512,
+    options = list(
+        center=Leaflet.latLng(48, 2),
+        zoom=5
+    ),
+    layerOptions = list(
+        maxZoom=19,
+        attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    )
+)
+```
+
+See the `Leaflet.createMap()` section for more information on the parameters. You then have access to all the functions for controlling and drawing
+on the map, always by using your `myMapId` id for the `mapId` functions. You can setup event listener to change the behaviour of the map depending
+on the user's inputs (see [Events](#events)).
+
+### Icons and markers
+
+You can create custom icons to show on the map. Custom icons images **must** be in the output directory to work.
+The module comes with a default icon located in `leaflet/resources/icon.png`.
+The first step is to copy the file to the output directory, then create the icon with a custom id. This custom id
+is used as the `iconId` parameter in `Leaflet.marker()`. Here is a complete example:
+
+```r
+file.copy(rpgm.pgmFilePath('rpgm_modules/leaflet/resources/icon.png'), rpgm.outputFile("leaflet_icon.png"));
+leafletIconPath <- if(rpgm.isServer()) rpgm.outputFileURL('leaflet_icon.png') else rpgm.outputFile('leaflet_icon.png')
+Leaflet.createIcon('defaultIcon', list(
+    iconUrl = leafletIconPath,
+    iconSize = c(48, 48),
+    iconAnchor = c(24, 48),
+    popupAnchor = c(0, -48)
+));
+Leaflet.marker('defaultIcon', Leaflet.latLng(48,5), 'My popup text')
 ```
 
 ## Methods
 
 In the following functions, `mapId` always refers to the unique id of a single map in the GUI, as defined in the `Leaflet.createMap` function with the `mapId` parameter.
+
+### Leaflet.addGeoJSON
+
+```r
+Leaflet.addGeoJSON(mapId, data)
+```
+
+Queue a new GeoJSON shape for future rendering on the map. When all shapes are added, call `flushGeoJSON()` to draw all the shapes at once.
+
+- `mapId` is the id of the map;
+- `data` is a list of:
+    - `id`: a unique id for the shape/zone;
+    - `points`: a list of points;
+    - `tooltip`: the HTML content of the tooltip when the user put its mouse over the shape;
+    - `color`: an HTML hex color, like `#ff0000`.
+
+### Leaflet.createIcon
+
+```r
+Leaflet.createIcon(iconId, options)
+```
+
+Create a new icon for future markers. Icon should be created before initializing the map.
+
+- `iconId` is a unique id;
+- `options` is a list of [Leaflet icon options](https://leafletjs.com/reference.html#icon).
 
 ### Leaflet.createMap
 
@@ -20,6 +127,77 @@ Leaflet.createMap(mapId, step, widgetId, layer = layerURL, height = 512, options
 - widgetId is the id of the label widget that will contain the map
 - layerURL is the tile layer URL (see [TileLayer documentation](https://leafletjs.com/reference.html#tilelayer)), and layerOptions are the [TileLayer Options](https://leafletjs.com/reference.html#tilelayer-option).
 - options is the map options as defined by the [Leaflet map options](https://leafletjs.com/reference.html#map-option)
+
+### Leaflet.fitBounds
+
+```r
+Leaflet.fitBounds(mapId, bounds)
+```
+
+Show a specific view on the map.
+
+- `bounds` is a LatLngBounds created with `Leaflet.latLngBounds()`
+
+### Leaflet.flushGeoJSON
+
+```r
+Leaflet.flushGeoJSON(mapId)
+```
+
+Remove all previous rendered geojson shapes and draw all the queued shapes with `addGeoJSON()`.
+
+### Leaflet.hideLoading
+
+```r
+Leaflet.hideLoading(mapId)
+```
+
+Hide the loading state of a map.
+
+### Leaflet.latLng
+
+```r
+Leaflet.latLng(lat, lng)
+```
+
+Create a new LatLng object to use where [Leaflet LatLng object](https://leafletjs.com/reference.html#latlng) are used.
+
+### Leaflet.latLngBounds
+
+```r
+Leaflet.latLngBounds(corner1, corner2)
+```
+
+Create a new LatLng object to use where [Leaflet LatLngBounds object](https://leafletjs.com/reference.html#latlngbounds) are used.
+
+### Leaflet.marker
+
+```r
+Leaflet.marker(iconId, latlng, popup, options = list())
+```
+
+Create a new marker to be used with `Leaflet.updateMarkers()`.
+
+- `iconId` is the id of an icon created with `Leaflet.createIcon()`;
+- `latlng` is the position of the marker created with `Leaflet.latLng()`;
+- `popup` is the HTML content of the popup when the user click on the marker;
+- `options` is a list of [Leaflet marker options](https://leafletjs.com/reference.html#marker-option).
+
+### Leaflet.on
+
+```r
+Leaflet.on(mapId, eventName, callback)
+```
+
+Add a new event listener. See the [Events](#events) section for more information.
+
+### Leaflet.off
+
+```r
+Leaflet.off(mapId, eventName, callback)
+```
+
+Remove an existing event listener. See the [Events](#events) section for more information.
 
 ### Leaflet.setView
 
@@ -40,39 +218,21 @@ Leaflet.setZoom(mapId, zoom)
 
 Set the zoom level of the map.
 
-### Leaflet.fitBounds
+### Leaflet.showLoading
 
 ```r
-Leaflet.fitBounds(mapId, bounds)
+Leaflet.showLoading(mapId)
 ```
 
-Show a specific view on the map.
+Show the loading state of a map with a spinning animation over the map.
 
-- `bounds` is a LatLngBounds created with `Leaflet.latLngBounds()`
-
-### Leaflet.createIcon
+### Leaflet.updateLegend
 
 ```r
-Leaflet.createIcon(iconId, options)
+Leaflet.updateLegend(mapId, content)
 ```
 
-Create a new icon for future markers. Icon should be created before initializing the map.
-
-- `iconId` is a unique id;
-- `options` is a list of [Leaflet icon options](https://leafletjs.com/reference.html#icon).
-
-### Leaflet.marker
-
-```r
-Leaflet.marker(iconId, latlng, popup, options = list())
-```
-
-Create a new marker to be used with `Leaflet.updateMarkers()`.
-
-- `iconId` is the id of an icon created with `Leaflet.createIcon()`;
-- `latlng` is the position of the marker created with `Leaflet.latLng()`;
-- `popup` is the HTML content of the popup when the user click on the marker;
-- `options` is a list of [Leaflet marker options](https://leafletjs.com/reference.html#marker-option).
+Update the content of the legend of the map with `content`.
 
 ### Leaflet.updateMarkers
 
@@ -85,72 +245,52 @@ Remove all existing markers on the map and draw all the markers in the `markers`
 - `mapId` is the id of the map;
 - `markers` should be a list of markers created with `Leaflet.marker()`.
 
-### Leaflet.updateLegend
-
-```r
-Leaflet.updateLegend(mapId, content)
-```
-
-Update the content of the legend of the map with `content`.
-
-### Leaflet.addGeoJSON
-
-```r
-Leaflet.addGeoJSON(mapId, data)
-```
-
-Queue a new GeoJSON shape for future rendering on the map. When all shapes are added, call `flushGeoJSON()` to draw all the shapes at once.
-
-- `mapId` is the id of the map;
-- `data` is a list of:
-    - `id`: a unique id for the shape/zone;
-    - `points`: a list of points;
-    - `tooltip`: the HTML content of the tooltip when the user put its mouse over the shape;
-    - `color`: an HTML hex color, like `#ff0000`.
-
-### Leaflet.flushGeoJSON
-
-```r
-Leaflet.flushGeoJSON(mapId)
-```
-
-Remove all previous rendered geojson shapes and draw all the queued shapes with `addGeoJSON()`.
-
-### Leaflet.showLoading
-
-```r
-Leaflet.showLoading(mapId)
-```
-
-Show the loading state of a map with a spinning animation over the map.
-
-### Leaflet.hideLoading
-
-```r
-Leaflet.hideLoading(mapId)
-```
-
-Hide the loading state of a map.
-
-### Leaflet.latlng
-
-```r
-Leaflet.latlng(lat, lng)
-```
-
-Create a new LatLng object to use where [Leaflet LatLng object](https://leafletjs.com/reference.html#latlng) are used.
-
-### Leaflet.latLngBounds
-
-```r
-Leaflet.latLngBounds(corner1, corner2)
-```
-
-Create a new LatLng object to use where [Leaflet LatLngBounds object](https://leafletjs.com/reference.html#latlngbounds) are used.
-
 ## Events
 
-onDidLoad
-onDidClickMap # lat, lng
-onDidClickZone zoneId, northLat, eastLng, southLat, westLng, zoomLevel
-onDidChangeView northLat, eastLng, southLat, westLng, zoomLevel
+The Leaflet module comes with an event system where you can add functions that will be called when something happens on the map.
+To setup a new hook on an event, you have to call `Leaflet.on()` with the unique id of your map, the event and your callback function.
+Additional parameters are in a list passed as the first argument to the function. Here is an example:
+
+```r
+Leaflet.on('myMapId', 'onDidClickMap', function(data){
+    cat(paste0('User clicked on the map on lat:', data$lat, ' and lng:', data$lng, '.'));
+});
+```
+
+You can also use a previously created function:
+
+```r
+myCallback <- function(data){
+    cat(paste0('User clicked on the map on lat:', data$lat, ' and lng:', data$lng, '.'));
+}
+Leaflet.on('myMapId', 'onDidClickMap', myCallback);
+```
+
+### onDidChangeView
+
+Called when the user has finished to move or zoom the map, and its view has changed. The `data` parameter contains:
+
+- `northLat`: the latitude of the most north position of the current view;
+- `eastLng`: the longitude of the most east position of the current view;
+- `southLat`: the latitude of the most south position of the current view;
+- `westLng`: the longitude of the most west position of the current view;
+- `zoomLevel`: the current zoom level of the map.
+
+###  onDidClickMap
+
+Called when the user clicked somewhere on the map. The `data` parameter contains:
+
+- `lat`: the latitude of the click;
+- `lng`: the longitude of the click.
+
+### onDidClickZone
+
+Called when the user clicked on a zone previously added with `addGeoJSON()`. The `data` parameter contains:
+
+- `zoneId`: the zone unique id as defined in `addGeoJSON()`;
+- `northLat`, `eastLng`, `southLat`, `westLng` and `zoomLevel`: same as the `onDidChangeView` event.
+
+### onDidLoad
+
+`onDidLoad` is called when the map finished its initialization, and is ready to draw shapes, set view and any other uses.
+There is no argument to `onDidLoad`.
