@@ -66,8 +66,7 @@ DonneesCartes <- list()
 loadDonneesPrimes <- function(path, continue = 1L)
 {
     #Premier passage
-    if(is.null(DonneesCartes[["Primes"]]))
-    {
+    if(is.null(DonneesCartes[["Primes"]])){
         DonneesCartes[["Primes"]] <<- list(
             valeurs = list(),
             couleurs = list(),
@@ -76,8 +75,8 @@ loadDonneesPrimes <- function(path, continue = 1L)
         )
     }
 
-    if(continue == 1L)
-    {
+    if(continue == 1L){
+        Leaflet.showLoading('main')
         gui.show(rpgm.step('main', 'leaflet'), 'progressbar_donnees')
         gui.setProperties("this", "progressbar_donnees", list(value = 0, progressdescription = "0%"))
         Donnees[["Primes"]] <<- data.table::fread(path, sep =";", na.strings=c("",NA,"NULL"), select=c("lat", "lng", "prime_ttc", "var_1", "var_2", "var_3"), encoding = 'UTF-8')
@@ -92,7 +91,7 @@ loadDonneesPrimes <- function(path, continue = 1L)
     }
 
     #Chargement par niveau, reprise si continue > 2L et que ce n'est pas terminé
-    if(continue <= 6L)
+    if(continue <= 6L){
         for(i in continue:length(shape))
         {
             Z <- as.data.frame(sf::st_within(donnees_points_sf, shape[[i]])) #dans le polygone ou non, tester si plus performant
@@ -119,15 +118,16 @@ loadDonneesPrimes <- function(path, continue = 1L)
                 return(NULL)
             }
         }
+    }
+
     mapReady$Primes <<- 6L
     gui.hide("this", 'progressbar_donnees')
+    Leaflet.hideLoading('main')
 }
 
 loadDonneesVents <- function(path, continue = 1L)
 {
-
-    if(is.null(DonneesCartes[["Ciaran"]]))
-    {
+    if(is.null(DonneesCartes[["Ciaran"]])){
         DonneesCartes[["Ciaran"]] <<- list(
             valeurs = list(),
             couleurs = list(),
@@ -136,8 +136,8 @@ loadDonneesVents <- function(path, continue = 1L)
         )
     }
 
-    if(continue == 1L)
-    {
+    if(continue == 1L){
+        Leaflet.showLoading('main')
         gui.show(rpgm.step('main', 'leaflet'), 'progressbar_donnees')
         gui.setProperties("this", "progressbar_donnees", list(value = 0, progressdescription = "0%"))
         Donnees[["Ciaran"]] <<- data.table::fread(path, sep =";", na.strings=c("",NA,"NULL"), select=c("Coordonnees", "Rafale sur les 10 dernieres minutes"))
@@ -156,7 +156,7 @@ loadDonneesVents <- function(path, continue = 1L)
         vents_points_sf <<- sf::st_as_sf(vents_points, coords = c('lng', 'lat'), crs = sf::st_crs(shape[[1]]))
     }
 
-    if(continue <= 6L)
+    if(continue <= 6L){
         for(i in continue:length(shape))
         {
             Z <- as.data.frame(sf::st_within(vents_points_sf, shape[[i]])) #dans le polygone ou non, tester si plus performant
@@ -189,26 +189,34 @@ loadDonneesVents <- function(path, continue = 1L)
                 return(NULL)
             }
         }
+    }
+
     mapReady$Ciaran <<- 6L
     gui.hide("this", 'progressbar_donnees')
+    Leaflet.hideLoading('main')
 }
 
-loadDonnees <- function(nom, path, continue = 1L)
-{
-    if(nom == "Primes")
-        if(is.null(DonneesCartes[[nom]]) || mapReady[[nom]] < 6L)
-        {
+loadDonnees <- function(nom, path, continue = 1L){
+    if(nom == "Primes"){
+        if(is.null(DonneesCartes[[nom]]) || mapReady[[nom]] < 6L){
             loadDonneesPrimes(path, continue)
         }
-        else
+        else {
             gui.hide("this", 'progressbar_donnees')
-    if(nom == "Ciaran")
-        if(is.null(DonneesCartes[[nom]]) || mapReady[[nom]] < 6L)
-        {
+            Leaflet.hideLoading('main')
+            Leaflet.triggerViewEvent('main')
+        }
+    }
+    else if(nom == "Ciaran"){
+        if(is.null(DonneesCartes[[nom]]) || mapReady[[nom]] < 6L){
             loadDonneesVents(path, continue)
         }
-        else
+        else {
             gui.hide("this", 'progressbar_donnees')
+            Leaflet.hideLoading('main')
+            Leaflet.triggerViewEvent('main')
+        }
+    }
 }
 
 path <- list(Primes = "donnees/aportfolios.csv", Ciaran = "donnees/synop.csv")

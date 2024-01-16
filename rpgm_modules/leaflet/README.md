@@ -2,6 +2,8 @@
 
 R RPGM module for controlling a Leaflet map in a GUI.
 
+Current Leaflet version: 1.9.4.
+
 ## Table of Contents
 
 1. [Installation](#installation)
@@ -21,8 +23,9 @@ R RPGM module for controlling a Leaflet map in a GUI.
     12. [.setView()](#leafletsetview)
     13. [.setZoom()](#leafletsetzoom)
     14. [.showLoading()](#leafletshowloading)
+    15. [.triggerViewEvent](#leaflettriggerviewevent)
     15. [.updateLegends()](#leafletupdatelegend)
-    15. [.updateMarkers()](#leafletupdatemarkers)
+    16. [.updateMarkers()](#leafletupdatemarkers)
 4. [Events](#events)
     1. [onDidChangeView](#ondidchangeview)
     2. [onDidClickMap](#ondidclickmap)
@@ -83,7 +86,7 @@ Leaflet.createIcon('defaultIcon', list(
     iconAnchor = c(24, 48),
     popupAnchor = c(0, -48)
 ));
-Leaflet.marker('defaultIcon', Leaflet.latLng(48,5), 'My popup text')
+Leaflet.marker('defaultIcon', Leaflet.latLng(48,2), 'My popup text')
 ```
 
 ## Methods
@@ -225,6 +228,14 @@ Leaflet.showLoading(mapId)
 ```
 
 Show the loading state of a map with a spinning animation over the map.
+
+### Leaflet.triggerViewEvent
+
+```r
+Leaflet.triggerViewEvent(mapId)
+```
+
+Force the map to send an `onDidChangeView` event. Useful to refresh the map view after loading data for example.
 
 ### Leaflet.updateLegend
 

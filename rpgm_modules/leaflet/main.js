@@ -81,8 +81,11 @@ const LeafletMapManager = new class {
             else if(message === 'leaflet/loading/show'){
                 mapInstance.loadingShow();
             }
-            else if(message === 'leaflet/loading/false'){
+            else if(message === 'leaflet/loading/hide'){
                 mapInstance.loadingHide();
+            }
+            else if(message === 'leaflet/triggerView'){
+                mapInstance.sendChange();
             }
         });
     }
@@ -140,7 +143,7 @@ class LeafletMap {
         // Info popup
         this._tooltip = L.control();
         this._tooltip.onAdd = function(map){
-            this._div = L.DomUtil.create('div', 'info');
+            this._div = L.DomUtil.create('div', 'map-info');
             this.update();
             return this._div;
         };
@@ -153,7 +156,7 @@ class LeafletMap {
         // Legend
         this._legend = L.control({position: 'bottomright'});
         this._legend.onAdd = (map)=>{
-            this._legendDiv = L.DomUtil.create('div', 'info map-legend');
+            this._legendDiv = L.DomUtil.create('div', 'map-info map-legend');
             this._legendDiv.innerHTML = 'Légende';
             return this._legendDiv;
         };
@@ -308,10 +311,21 @@ class LeafletMap {
     }
 
     loadingShow(){
-
+        const loading = document.getElementById(`leaflet-${this._id}-loading`);
+        if(loading){
+            return;
+        }
+        document.getElementById(`leaflet-${this._id}`).insertAdjacentHTML('afterbegin', `
+            <div id="leaflet-${this._id}-loading" class="map-loading">
+                <div class="map-loading-spinner"></div>
+            </div>
+        `)
     }
 
     loadingHide(){
-
+        const loading = document.getElementById(`leaflet-${this._id}-loading`);
+        if(loading){
+            loading.remove();
+        }
     }
 }

@@ -35,6 +35,9 @@ Leaflet.setZoom <- function(mapId, zoom){
 Leaflet.fitBounds <- function(mapId, bounds){
     rpgm.sendToJavascript('leaflet/map/fit', list(mapId=mapId, bounds=bounds))
 }
+Leaflet.triggerViewEvent <- function(mapId){
+    rpgm.sendToJavascript('leaflet/triggerView', list(mapId=mapId))
+}
 
 #### MARKERS & ICONS ####
 Leaflet.marker <- function(iconId, latlng, popup, options = list()){

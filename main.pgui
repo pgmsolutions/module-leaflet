@@ -114,7 +114,7 @@
 								"helptext": "",
 								"helpposition": "bottom",
 								"required": false,
-								"onchange": "loadDonnees(empreinte, path[[empreinte]]); rpgm.sendToJavascript('updateMap', list())",
+								"onchange": "loadDonnees(empreinte, path[[empreinte]]); Leaflet.triggerViewEvent('main');",
 								"condition": "",
 								"choices": [
 									{
