@@ -39,11 +39,21 @@ You should have a `modules/leaflet/README.md` file.
 
 ## Usage
 
-First, create a new label widget in a GUI and give it a unique id, like `myMap`. Then create a new R file, add it to the sequencer
-before the GUI, and source the module:
+Open your ppro file and add the following lines in the **Custom CSS/JS files** field:
+
+```
+modules/leaflet/resources/leaflet.js
+modules/leaflet/resources/leaflet.css
+modules/leaflet/main.css
+modules/leaflet/main.js
+```
+
+Then create a new empty label widget in a GUI and give it a unique id, like `myMap`.
+Create a new R file and add it to the sequencer before the GUI containing the map.
+In the R file, source the module:
 
 ```r
-source(rpgm.pgmFilePath('rpgm_modules/leaflet/main.R'))
+source(rpgm.pgmFilePath('modules/leaflet/main.R'))
 ```
 
 You can then initialize the map. This must be done before entering the GUI with the map.
@@ -78,7 +88,7 @@ The first step is to copy the file to the output directory, then create the icon
 is used as the `iconId` parameter in `Leaflet.marker()`. Here is a complete example:
 
 ```r
-file.copy(rpgm.pgmFilePath('rpgm_modules/leaflet/resources/icon.png'), rpgm.outputFile("leaflet_icon.png"));
+file.copy(rpgm.pgmFilePath('modules/leaflet/resources/icon.png'), rpgm.outputFile("leaflet_icon.png"));
 leafletIconPath <- if(rpgm.isServer()) rpgm.outputFileURL('leaflet_icon.png') else rpgm.outputFile('leaflet_icon.png')
 Leaflet.createIcon('defaultIcon', list(
     iconUrl = leafletIconPath,
