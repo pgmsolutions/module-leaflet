@@ -79,7 +79,7 @@ getLegend <- function(info, unite)
 {
     result <- paste0('Légende (', unite, ') <br>');
     for(i in info){
-        result <- paste0(result, '<div><i style="background:', i$color, '"></i> ', i$label, '</div>')
+        result <- paste0(result, '<div class="map-legend-entry"><i style="background:', i$color, '"></i> ', i$label, '</div>')
     }
     return(result);
 }
