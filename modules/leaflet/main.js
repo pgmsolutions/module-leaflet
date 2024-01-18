@@ -1,4 +1,4 @@
-function jsonToLatLng(obj){
+window.jsonToLatLng = function(obj){
     if(typeof obj !== 'object' || !('lat' in obj) || !('lng' in obj) || typeof obj.lat !== 'number' || typeof obj.lng !== 'number'){
         RPGM.newJavascriptError({message: 'Could not convert an object to a LatLng object!'});
     }
@@ -8,7 +8,7 @@ function jsonToLatLng(obj){
 /**
  * Manage all the maps in the app.
  */
-const LeafletMapManager = new class {
+window.LeafletMapManager = new class {
     constructor(){
         this._currentStepCache = null;
         this._maps = [];
@@ -87,6 +87,15 @@ const LeafletMapManager = new class {
             else if(message === 'leaflet/triggerView'){
                 mapInstance.sendChange();
             }
+            else if(message === 'leaflet/shapes/add/circle'){
+                mapInstance.addCircle(data.shapeId, data.center, data.radius, data.tooltip, data.color);
+            }
+            else if(message === 'leaflet/shapes/add/polygon'){
+                mapInstance.addPolygon(data.shapeId, data.points, data.tooltip, data.color);
+            }
+            else if(message === 'leaflet/shapes/flush'){
+                mapInstance.flushShapes();
+            }
         });
     }
 
@@ -109,7 +118,7 @@ LeafletMapManager.initialize();
 /**
  * This class manages the leaflet map.
  */
-class LeafletMap {
+window.LeafletMap = class {
     constructor(options){
         this._id = options.id;
 
@@ -117,6 +126,8 @@ class LeafletMap {
         this._queueGeoJSON = [];
         this._lastGeoJSON = null;
         this._markers = [];
+        this._queuedDrawings = [];
+        this._drawings = [];
 
         /** Timer to not send too much changes to RPGM */
         this._debouncer = null;
@@ -289,6 +300,51 @@ class LeafletMap {
             southLat: this._map.getBounds().getSouth(),
             westLng: this._map.getBounds().getWest(),
             zoomLevel: this._map.getZoom()
+        });
+    }
+
+    addCircle(id, point, tooltip, options){
+        this._queuedDrawings.push({type: 'circle', id, point, tooltip, options});
+    }
+
+    addPolygon(id, points, tooltip, options){
+        this._queuedDrawings.push({type: 'polygon', id, points, tooltip, options});
+    }
+
+    flushShapes(){
+        this._drawings.forEach(d => d.remove());
+        this._drawings = [];
+
+        this._queuedDrawings.forEach(d => {
+            let shape = null;
+            if(d.type === 'circle'){
+                shape = L.circle(d.point, d.options);
+            }
+            else if(d.type === 'polygon'){
+                shape = L.polygon(d.points, d.options);
+            }
+            
+            if(shape === null){
+                return;
+            }
+
+            if(typeof d.tooltip === 'string' && d.tooltip.trim().length > 0){
+                shape.bindPopup(d.tooltip);
+            }
+
+            shape.on('click', ()=>{
+                RPGM.sendMessage('r', 'leaflet/onDidClickShape', {
+                    id: this._id,
+                    shapeId: d.id,
+                    northLat: this._map.getBounds().getNorth(),
+                    eastLng: this._map.getBounds().getEast(),
+                    southLat: this._map.getBounds().getSouth(),
+                    westLng: this._map.getBounds().getWest(),
+                    zoomLevel: this._map.getZoom()
+                });
+            });
+            this._drawings.push(shape);
+            shape.addTo(this._map);
         });
     }
 

@@ -135,6 +135,8 @@ Create a new icon for future markers. Icon should be created before initializing
 Leaflet.createMap(mapId, step, widgetId, layer = layerURL, height = 512, options = list(), layerOptions = list())
 ```
 
+Create a new map widget. This function must be called before entering the GUI containing the map.
+
 - mapId is a unique name you give to the map
 - step is the step where the map will be, created with `rpgm.step()`
 - widgetId is the id of the label widget that will contain the map
