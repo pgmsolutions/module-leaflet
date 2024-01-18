@@ -1,4 +1,4 @@
-# Queue a new GeoJSON shape for future rendering on the map. When all shapes are added, call `flushGeoJSON()` to draw all the shapes at once.
+# Queue a new GeoJSON shape for future rendering on the map. When all GeoJSON shapes are added, call `flushGeoJSON()` to draw all the GeoJSON shapes at once.
 Leaflet.addGeoJSON <- function(mapId, data){
     rpgm.sendToJavascript('leaflet/geojson/add', list(mapId=mapId, zoneId=data$id, points=data$points, tooltip=data$tooltip, color=data$color))
 }

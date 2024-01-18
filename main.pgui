@@ -332,6 +332,23 @@
 					]
 				}
 			]
+		},
+		{
+			"id": "",
+			"type": "button",
+			"data": {
+				"value": "Draw random shapes",
+				"isr": false,
+				"css": "",
+				"margintop": "10",
+				"labeltext": "",
+				"labelposition": "left",
+				"helptext": "",
+				"helpposition": "bottom",
+				"onpress": "updateRandomShapes()",
+				"buttonsize": "md",
+				"buttondesign": "primary"
+			}
 		}
 	],
 	"submitbutton": false,

@@ -103,13 +103,31 @@ Leaflet.marker('defaultIcon', Leaflet.latLng(48,2), 'My popup text')
 
 In the following functions, `mapId` always refers to the unique id of a single map in the GUI, as defined in the `Leaflet.createMap` function with the `mapId` parameter.
 
+### Leaflet.addCircle
+
+```r
+Leaflet.addCircle(mapId, shapeId, point, tooltip="", options=list())
+```
+
+Queue a new circle in the shapes layer. When all shapes are added, call `flushShapes()` to draw all the shapes at once.
+
+- `shapeId` is a unique shape id;
+- `point` is the center of the circle created with `Leaflet.latLng()`;
+- `tooltip` is a text showing when clicking on the shape;
+- `options` are the [Circle polygon options](https://leafletjs.com/reference.html#circle). You should at least set the `radius` of the circle.
+
+# Remove all previously drawed shapes and draw all queued shapes
+Leaflet.flushShapes <- function(mapId){
+    rpgm.sendToJavascript('leaflet/shapes/flush', list(mapId=mapId))
+}
+
 ### Leaflet.addGeoJSON
 
 ```r
 Leaflet.addGeoJSON(mapId, data)
 ```
 
-Queue a new GeoJSON shape for future rendering on the map. When all shapes are added, call `flushGeoJSON()` to draw all the shapes at once.
+Queue a new GeoJSON shape for future rendering on the map. When all GeoJSON shapes are added, call `flushGeoJSON()` to draw all the GeoJSON shapes at once.
 
 - `mapId` is the id of the map;
 - `data` is a list of:
@@ -117,6 +135,19 @@ Queue a new GeoJSON shape for future rendering on the map. When all shapes are a
     - `points`: a list of points;
     - `tooltip`: the HTML content of the tooltip when the user put its mouse over the shape;
     - `color`: an HTML hex color, like `#ff0000`.
+
+### Leaflet.addPolygon
+
+```r
+Leaflet.addPolygon(mapId, shapeId, points, tooltip="", options=list())
+```
+
+Queue a new polygon in the shapes layer. When all shapes are added, call `flushShapes()` to draw all the shapes at once.
+
+- `shapeId` is a unique shape id;
+- `points` is a list of points for the polygon created with `Leaflet.latLng()`;
+- `tooltip` is a text showing when clicking on the shape;
+- `options` are the [Leaflet polygon options](https://leafletjs.com/reference.html#polygon).
 
 ### Leaflet.createIcon
 
@@ -160,6 +191,14 @@ Leaflet.flushGeoJSON(mapId)
 ```
 
 Remove all previous rendered geojson shapes and draw all the queued shapes with `addGeoJSON()`.
+
+### Leaflet.flushShapes
+
+```r
+Leaflet.flushShapes(mapId)
+```
+
+Remove all previous rendered simple shapes and draw all the queued shapes with `addCircle()` and `addPolygon()`.
 
 ### Leaflet.hideLoading
 

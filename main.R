@@ -90,6 +90,13 @@ setDefaultView <- function(){
     Leaflet.setZoom('main', 5);
 }
 
+# Demo: draw a random circle and polygon on the world
+updateRandomShapes <- function(){
+    Leaflet.addCircle('main', '1', Leaflet.latLng(42+runif(1)*8, -4+runif(1)*11), 'Random circe', list(radius=5000+runif(1)*5000))
+    Leaflet.addPolygon('main', '2', list(Leaflet.latLng(42+runif(1)*8, -4+runif(1)*11), Leaflet.latLng(42+runif(1)*8, -4+runif(1)*11), Leaflet.latLng(42+runif(1)*8, -4+runif(1)*11)), 'Random polygon')
+    Leaflet.flushShapes('main')
+}
+
 # Called when the end-user changes the view of the leaflet map
 onDidChangeView <- function(data){
     z <<- getLvlPolygonToDisplay(data$zoomLevel)

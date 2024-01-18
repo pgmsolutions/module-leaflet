@@ -88,10 +88,10 @@ window.LeafletMapManager = new class {
                 mapInstance.sendChange();
             }
             else if(message === 'leaflet/shapes/add/circle'){
-                mapInstance.addCircle(data.shapeId, data.center, data.radius, data.tooltip, data.color);
+                mapInstance.addCircle(data.shapeId, data.point, data.tooltip, data.options);
             }
             else if(message === 'leaflet/shapes/add/polygon'){
-                mapInstance.addPolygon(data.shapeId, data.points, data.tooltip, data.color);
+                mapInstance.addPolygon(data.shapeId, data.points, data.tooltip, data.options);
             }
             else if(message === 'leaflet/shapes/flush'){
                 mapInstance.flushShapes();
@@ -346,6 +346,7 @@ window.LeafletMap = class {
             this._drawings.push(shape);
             shape.addTo(this._map);
         });
+        this._queuedDrawings = [];
     }
 
     updateLegend(content){
