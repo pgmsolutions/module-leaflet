@@ -9,28 +9,32 @@ Current Leaflet version: 1.9.4.
 1. [Installation](#installation)
 2. [Usage](#usage)
 3. [Methods](#methods)
-    1. [.addGeoJSON()](#leafletaddgeojson)
-    2. [.createIcon()](#leafletcreateicon)
-    3. [.createMap()](#leafletcreatemap)
-    4. [.fitBounds()](#leafletfitbounds)
-    5. [.flushGeoJSON()](#leafletflushgeojson)
-    6. [.hideLoading()](#leaflethideloading)
-    7. [.latLng()](#leafletlatlng)
-    8. [.latLngBounds()](#leafletlatlngbounds)
-    9. [.marker()](#leafletmarker)
-    10. [.on()](#leafleton)
-    11. [.off()](#leafletoff)
-    12. [.setView()](#leafletsetview)
-    13. [.setZoom()](#leafletsetzoom)
-    14. [.showLoading()](#leafletshowloading)
-    15. [.triggerViewEvent](#leaflettriggerviewevent)
-    15. [.updateLegends()](#leafletupdatelegend)
-    16. [.updateMarkers()](#leafletupdatemarkers)
+    1. [.addCircle()](#leafletaddcircle)
+    2. [.addGeoJSON()](#leafletaddgeojson)
+    3. [.addPolygon()](#leafletaddpolygon)
+    4. [.createIcon()](#leafletcreateicon)
+    5. [.createMap()](#leafletcreatemap)
+    6. [.fitBounds()](#leafletfitbounds)
+    7. [.flushGeoJSON()](#leafletflushgeojson)
+    8. [.flushShapes()](#leafletflushshapes)
+    9. [.hideLoading()](#leaflethideloading)
+    10. [.latLng()](#leafletlatlng)
+    11. [.latLngBounds()](#leafletlatlngbounds)
+    12. [.marker()](#leafletmarker)
+    13. [.on()](#leafleton)
+    14. [.off()](#leafletoff)
+    15. [.setView()](#leafletsetview)
+    16. [.setZoom()](#leafletsetzoom)
+    17. [.showLoading()](#leafletshowloading)
+    18. [.triggerViewEvent](#leaflettriggerviewevent)
+    19. [.updateLegends()](#leafletupdatelegend)
+    20. [.updateMarkers()](#leafletupdatemarkers)
 4. [Events](#events)
     1. [onDidChangeView](#ondidchangeview)
     2. [onDidClickMap](#ondidclickmap)
-    3. [onDidClickZone](#ondidclickzone)
-    4. [onDidLoad](#ondidload)
+    4. [onDidClickShape](#ondidclickshape)
+    5. [onDidClickZone](#ondidclickzone)
+    6. [onDidLoad](#ondidload)
 
 ## Installation
 
@@ -344,6 +348,13 @@ Called when the user clicked somewhere on the map. The `data` parameter contains
 
 - `lat`: the latitude of the click;
 - `lng`: the longitude of the click.
+
+### onDidClickShape
+
+Called when the user clicked on a shape previously added with `addCircle()` or `addPolygon()`. The `data` parameter contains:
+
+- `shapeId`: the zone unique id of the shape;
+- `northLat`, `eastLng`, `southLat`, `westLng` and `zoomLevel`: same as the `onDidChangeView` event.
 
 ### onDidClickZone
 

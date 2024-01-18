@@ -96,6 +96,9 @@ updateRandomShapes <- function(){
     Leaflet.addPolygon('main', '2', list(Leaflet.latLng(42+runif(1)*8, -4+runif(1)*11), Leaflet.latLng(42+runif(1)*8, -4+runif(1)*11), Leaflet.latLng(42+runif(1)*8, -4+runif(1)*11)), 'Random polygon')
     Leaflet.flushShapes('main')
 }
+Leaflet.on('main', 'onDidClickShape', function(data){
+    cat(paste0('User clicked on the shape #', data$shapeId,'\n'));
+});
 
 # Called when the end-user changes the view of the leaflet map
 onDidChangeView <- function(data){

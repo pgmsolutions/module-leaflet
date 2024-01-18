@@ -26,6 +26,10 @@ rpgm.on('didReceiveMessage', function(message, data){
         # zoneId, northLat, eastLng, southLat, westLng, zoomLevel
         .leaflet$emit(data$id, 'onDidClickZone', list(data=data))
     }
+    else if(message == 'leaflet/onDidClickShape'){
+        # shapeId, northLat, eastLng, southLat, westLng, zoomLevel
+        .leaflet$emit(data$id, 'onDidClickShape', list(data=data))
+    }
     else if(message == 'leaflet/onDidChangeView'){
         # northLat, eastLng, southLat, westLng, zoomLevel
         .leaflet$emit(data$id, 'onDidChangeView', list(data=data))
