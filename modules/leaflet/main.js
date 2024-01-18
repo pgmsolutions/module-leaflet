@@ -384,4 +384,16 @@ window.LeafletMap = class {
             loading.remove();
         }
     }
+
+    setView(center, zoom){
+        this._map.setView(center, zoom);
+    }
+
+    setZoom(zoom){
+        this._map.setZoom(zoom);
+    }
+
+    fitBounds(bounds){
+        this._map.fitBounds(bounds);
+    }
 }

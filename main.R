@@ -86,7 +86,7 @@ getLegend <- function(info, unite)
 
 # Set the default view and zoom of the leaflet map
 setDefaultView <- function(){
-    Leaflet.setView('main', Leaflet.latLng(48, 2));
+    Leaflet.setView('main', Leaflet.latLng(48, 2), 5);
     Leaflet.setZoom('main', 5);
 }
 
