@@ -26,7 +26,7 @@ Current Leaflet version: 1.9.4.
     15. [.setView()](#leafletsetview)
     16. [.setZoom()](#leafletsetzoom)
     17. [.showLoading()](#leafletshowloading)
-    18. [.triggerViewEvent](#leaflettriggerviewevent)
+    18. [.triggerViewEvent()](#leaflettriggerviewevent)
     19. [.updateLegends()](#leafletupdatelegend)
     20. [.updateMarkers()](#leafletupdatemarkers)
 4. [Events](#events)
