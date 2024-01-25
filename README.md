@@ -120,11 +120,6 @@ Queue a new circle in the shapes layer. When all shapes are added, call `flushSh
 - `tooltip` is a text showing when clicking on the shape;
 - `options` are the [Circle polygon options](https://leafletjs.com/reference.html#circle). You should at least set the `radius` of the circle.
 
-# Remove all previously drawed shapes and draw all queued shapes
-Leaflet.flushShapes <- function(mapId){
-    rpgm.sendToJavascript('leaflet/shapes/flush', list(mapId=mapId))
-}
-
 ### Leaflet.addGeoJSON
 
 ```r
