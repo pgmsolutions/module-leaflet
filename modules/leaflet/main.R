@@ -1,0 +1,12 @@
+.leaflet <- new.env(parent=emptyenv())
+
+source(rpgm.pgmFilePath('modules/leaflet/R/maps.R'))
+source(rpgm.pgmFilePath('modules/leaflet/R/view.R'))
+source(rpgm.pgmFilePath('modules/leaflet/R/events.R'))
+source(rpgm.pgmFilePath('modules/leaflet/R/javascript.R'))
+source(rpgm.pgmFilePath('modules/leaflet/R/utilities.R'))
+source(rpgm.pgmFilePath('modules/leaflet/R/icons.R'))
+source(rpgm.pgmFilePath('modules/leaflet/R/shapes.R'))
+source(rpgm.pgmFilePath('modules/leaflet/R/geojson.R'))
+source(rpgm.pgmFilePath('modules/leaflet/R/legend.R'))
+source(rpgm.pgmFilePath('modules/leaflet/R/loading.R'))
